@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Market Intelligence v7</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05070f;--panel:#07101e;--panel2:#050d1a;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --text:#dce8f8;--sub:#9ab0cc;--muted:#567090;--muted2:#384f68;
+  --accent:#e8a830;--accent2:#f4c060;
+  --green:#00cc7a;--green2:#00f090;
+  --red:#cc4444;--red2:#f07070;
+  --news-fs:12.5px;--wl-pad:9px 10px;
+  --cw0:275px;--cw2:360px;
+  --radius:4px;--radius2:6px;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{display:flex;flex-direction:column;height:100vh;font-family:'Poppins',sans-serif;color:var(--text);font-size:14px}
+
+/* NOTICE */
+.notice{display:none;align-items:center;gap:8px;padding:5px 14px;background:rgba(212,169,88,.08);border-bottom:1px solid rgba(212,169,88,.15);font-family:'Poppins',sans-serif;font-size:9px;color:var(--accent2);flex-shrink:0;letter-spacing:.03em}
+.notice.show{display:flex}
+.notice code{background:rgba(0,0,0,.3);padding:1px 6px}
+.nx{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;padding:0 14px;height:46px;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--panel);min-width:0;overflow:hidden}
+.logo{font-family:'Poppins',sans-serif;font-size:12px;color:var(--accent);letter-spacing:.22em;flex-shrink:0;white-space:nowrap}
+.logo em{color:var(--muted);font-style:normal;font-weight:300;letter-spacing:.07em}
+.hdr-sep{width:1px;height:18px;background:var(--border2);flex-shrink:0}
+.hdr-r{display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0}
+
+/* Panel toggles */
+.hdr-panels{display:flex;gap:3px;flex-shrink:0}
+.ppbtn{font-family:'Poppins',sans-serif;font-size:8px;padding:3px 8px;background:transparent;border:1px solid var(--border2);color:var(--muted2);cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;line-height:1;white-space:nowrap}
+.ppbtn:hover{border-color:var(--muted);color:var(--muted)}
+.ppbtn.on{border-color:var(--accent);color:var(--accent);background:rgba(184,137,58,.07)}
+
+/* Sessions */
+.sessions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.sess{display:flex;align-items:center;gap:4px;font-family:'Poppins',sans-serif;font-size:8px;letter-spacing:.08em;color:var(--muted);cursor:default}
+.sess-dot{width:5px;height:5px;border-radius:50%;background:var(--muted2);transition:background .6s,box-shadow .6s;flex-shrink:0}
+.sess-dot.open{background:var(--green2);box-shadow:0 0 5px rgba(46,216,136,.5)}
+
+/* Live */
+.live{display:flex;align-items:center;gap:5px;font-family:'Poppins',sans-serif;font-size:9px;color:var(--green2);letter-spacing:.12em;flex-shrink:0}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--green2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 6px var(--green2)}50%{opacity:.12;box-shadow:none}}
+
+/* Clocks */
+.clocks{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.clk{font-family:'Poppins',sans-serif;text-align:right}
+.clk-t{font-size:13px;color:var(--text);letter-spacing:.03em}
+.clk-d{font-size:8.5px;color:var(--muted);margin-top:1px;letter-spacing:.04em}
+.clk2{font-family:'Poppins',sans-serif;text-align:right;border-left:1px solid var(--border2);padding-left:10px}
+.clk2-t{font-size:11px;color:var(--sub);letter-spacing:.03em}
+.clk2-l{font-size:8px;color:var(--muted2);margin-top:1px;letter-spacing:.06em}
+
+.hbtn{font-family:'Poppins',sans-serif;font-size:9px;padding:4px 11px;background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:pointer;letter-spacing:.12em;text-transform:uppercase;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.hbtn:hover,.hbtn.on{border-color:var(--accent);color:var(--accent);background:rgba(184,137,58,.07)}
+
+/* TICKER */
+.ticker-wrap{height:46px;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--panel2);overflow:hidden}
+.ticker-wrap .tradingview-widget-container,.ticker-wrap .tradingview-widget-container__widget{height:100%}
+
+/* MAIN — flexbox */
+.main{display:flex;flex:1;overflow:hidden;min-height:0}
+
+/* COLUMNS */
+.col{display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border);min-height:0;min-width:0}
+.col:last-child{border-right:none}
+.col-hdr{display:flex;align-items:center;gap:6px;padding:0 10px;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--panel);height:34px}
+.col-label{font-family:'Poppins',sans-serif;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.pills{display:flex;gap:3px;overflow-x:auto;align-items:center;flex:1;min-width:0}
+.pills::-webkit-scrollbar{display:none}
+.pbtn{font-family:'Poppins',sans-serif;font-size:8px;padding:3px 9px;background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:pointer;letter-spacing:.05em;text-transform:uppercase;transition:all .15s;white-space:nowrap;flex-shrink:0;line-height:1}
+.pbtn:hover{border-color:var(--sub);color:var(--sub)}
+.pbtn.on{border-color:var(--accent);color:var(--accent);background:rgba(184,137,58,.08)}
+
+/* RESIZE HANDLES */
+.rh{background:var(--bg);border-right:1px solid var(--border);border-left:1px solid var(--border);width:5px;flex-shrink:0;cursor:col-resize;position:relative;z-index:10;display:flex;align-items:center;justify-content:center;transition:background .15s;user-select:none}
+.rh::after{content:'';position:absolute;width:1px;height:28px;background:var(--border2);border-radius:1px;transition:all .2s}
+.rh:hover,.rh.dragging{background:rgba(184,137,58,.08);border-color:rgba(184,137,58,.2)}
+.rh:hover::after,.rh.dragging::after{background:var(--accent);height:44px;width:2px}
+
+/* NEWS */
+#colNews{width:var(--cw0);flex-shrink:0}
+.news-search-bar{padding:5px 10px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--panel2)}
+.news-search-inp{width:100%;background:transparent;border:1px solid var(--border2);color:var(--text);padding:5px 9px;font-family:'Poppins',sans-serif;font-size:9px;outline:none;letter-spacing:.04em;transition:border .15s}
+.news-search-inp:focus{border-color:var(--accent)}
+.news-search-inp::placeholder{color:var(--muted2)}
+.news-scroll{flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch}
+.news-scroll::-webkit-scrollbar{width:3px}
+.news-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.ni{display:block;padding:10px 13px;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;transition:background .12s,opacity .25s;border-left:2px solid transparent}
+.ni:hover{background:rgba(184,137,58,.04);border-left-color:var(--accent)}
+.ni.read{opacity:.42}
+.ni.read .ni-title{color:var(--muted)}
+.ni-meta{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.ni-src{font-family:'Poppins',sans-serif;font-size:8.5px;color:var(--accent);text-transform:uppercase;letter-spacing:.09em;font-weight:500}
+.ni-dot{color:var(--muted2);font-size:8px}
+.ni-time{font-family:'Poppins',sans-serif;font-size:8.5px;color:var(--muted)}
+.ni-title{font-size:var(--news-fs);line-height:1.5;color:var(--text)}
+.ni-desc{font-family:'Poppins',sans-serif;font-size:9px;color:var(--muted);margin-top:5px;line-height:1.65;letter-spacing:.01em}
+.ni-msg{padding:26px 14px;font-family:'Poppins',sans-serif;font-size:10px;color:var(--muted);text-align:center;line-height:2.2}
+
+/* BROADCAST */
+#colBroadcast{flex:1;min-width:200px}
+.stream-grid{flex:1;display:grid;gap:2px;background:#000;min-height:0;overflow:hidden}
+.stream-grid[data-count="0"] .stream-empty{display:flex}
+.stream-grid[data-count="1"]{grid-template:1fr / 1fr}
+.stream-grid[data-count="2"]{grid-template:1fr / 1fr 1fr}
+.stream-grid[data-count="3"]{grid-template:1fr 1fr / 1fr 1fr}
+.stream-grid[data-count="4"]{grid-template:1fr 1fr / 1fr 1fr}
+.stream-grid[data-count="5"]{grid-template:1fr 1fr / 1fr 1fr 1fr}
+.stream-grid[data-count="6"]{grid-template:1fr 1fr / 1fr 1fr 1fr}
+.stream-empty{display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;width:100%;height:100%;font-family:'Poppins',sans-serif;font-size:10px;color:var(--muted);text-align:center;letter-spacing:.06em;grid-column:1/-1;grid-row:1/-1}
+.sf-icon{font-size:30px;opacity:.15}
+.slot{position:relative;background:#000;overflow:hidden;min-height:0;min-width:0}
+.slot iframe{width:100%;height:100%;border:none;display:block}
+.slot-label{position:absolute;top:7px;left:9px;font-family:'Poppins',sans-serif;font-size:8px;letter-spacing:.1em;color:rgba(255,255,255,.35);text-transform:uppercase;pointer-events:none;z-index:3}
+.slot-ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--panel2);font-family:'Poppins',sans-serif;font-size:9px;color:var(--muted);z-index:2;transition:opacity .3s}
+.slot-ov.hidden{display:none}
+.slot-ov-msg{letter-spacing:.07em;text-transform:uppercase}
+.slot-ov-lnk{color:var(--accent);text-decoration:none;border:1px solid var(--border2);padding:3px 12px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;transition:all .15s}
+.slot-ov-lnk:hover{border-color:var(--accent);background:rgba(184,137,58,.07)}
+.stream-grid-count{font-family:'Poppins',sans-serif;font-size:8px;color:var(--muted2);letter-spacing:.06em;flex-shrink:0}
+
+/* WATCHLIST */
+#colWatch{width:var(--cw2);flex-shrink:0}
+.wl-tabs{display:flex;overflow-x:auto;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--panel)}
+.wl-tabs::-webkit-scrollbar{height:2px}
+.wl-tabs::-webkit-scrollbar-thumb{background:var(--border2)}
+.wl-tab{font-family:'Poppins',sans-serif;font-size:9px;padding:7px 14px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;transition:all .15s;flex-shrink:0;margin-bottom:-1px}
+.wl-tab:hover{color:var(--sub)}
+.wl-tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.wl-body{flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch}
+.wl-body::-webkit-scrollbar{width:3px}
+.wl-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.wl-table{width:100%;border-collapse:collapse}
+.wl-table th{font-family:'Poppins',sans-serif;font-size:8px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;text-align:right;border-bottom:1px solid var(--border);background:var(--panel);position:sticky;top:0;z-index:1;font-weight:400;white-space:nowrap}
+.wl-table th:first-child{text-align:left;padding-left:12px}
+.wl-table td{padding:var(--wl-pad);border-bottom:1px solid var(--border);font-family:'Poppins',sans-serif;font-size:12px;text-align:right;vertical-align:middle;color:var(--sub)}
+.wl-table td:first-child{text-align:left;padding-left:12px}
+.wl-table tr{cursor:pointer}
+.wl-table tr:hover td{background:rgba(184,137,58,.04)}
+.wl-name{color:var(--text);font-family:'Poppins',sans-serif;font-size:13px;font-weight:400;display:block;letter-spacing:.01em}
+.wl-sym{font-family:'Poppins',sans-serif;font-size:8px;color:var(--muted);display:block;margin-top:2px;letter-spacing:.04em}
+.wl-price{color:var(--text);letter-spacing:.02em;font-size:13px}
+.wl-mstate{display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:5px;vertical-align:middle;flex-shrink:0;position:relative;top:-1px}
+.wl-mstate.regular{background:var(--green2)}
+.wl-mstate.pre,.wl-mstate.post{background:var(--accent)}
+.wl-mstate.closed,.wl-mstate.unknown{background:var(--muted2)}
+.up{color:var(--green2)}
+.dn{color:var(--red2)}
+.wl-range-cell{min-width:80px}
+.wl-range-wrap{display:inline-flex;flex-direction:column;align-items:flex-end;gap:2px}
+.wl-range-bar{position:relative;width:72px;height:3px;background:var(--border2);border-radius:2px;overflow:hidden}
+.wl-range-fill{position:absolute;top:0;height:100%;width:3px;background:var(--accent);border-radius:2px;min-width:3px}
+.wl-range-vals{font-size:8px;color:var(--muted2);letter-spacing:.01em;font-family:'Poppins',sans-serif;white-space:nowrap}
+.wl-52w{font-size:9px;letter-spacing:.01em;white-space:nowrap}
+.wl-vol{font-size:11px;letter-spacing:.01em}
+.wl-foot{display:flex;align-items:center;justify-content:space-between;padding:4px 10px;border-top:1px solid var(--border);flex-shrink:0;background:var(--panel)}
+.wl-ts{font-family:'Poppins',sans-serif;font-size:8px;color:var(--muted);letter-spacing:.04em}
+.wl-msg{padding:28px 14px;font-family:'Poppins',sans-serif;font-size:10px;color:var(--muted);text-align:center;line-height:2.2;letter-spacing:.04em}
+.wl-err{color:var(--red2);font-size:9.5px}
+.retry{font-family:'Poppins',sans-serif;font-size:9px;padding:5px 14px;background:transparent;border:1px solid var(--accent);color:var(--accent);cursor:pointer;letter-spacing:.1em;text-transform:uppercase;margin-top:10px;display:inline-block;transition:all .15s}
+.retry:hover{background:rgba(184,137,58,.1)}
+
+/* CHART MODAL */
+.chart-modal{position:fixed;inset:0;z-index:150;background:rgba(4,6,10,.8);display:none;align-items:center;justify-content:center}
+.chart-modal.open{display:flex}
+.chart-modal-inner{width:84vw;height:78vh;background:var(--panel2);border:1px solid var(--border2);display:flex;flex-direction:column;box-shadow:0 20px 80px rgba(0,0,0,.8)}
+.chart-modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border2);flex-shrink:0;background:var(--panel)}
+.chart-modal-title{font-family:'Poppins',sans-serif;font-size:10px;letter-spacing:.15em;color:var(--accent);text-transform:uppercase}
+.chart-modal-body{flex:1;min-height:0}
+.chart-modal-body .tradingview-widget-container{height:100%}
+.chart-modal-body .tradingview-widget-container__widget{height:100%}
+
+/* CALENDAR */
+.cal-drawer{position:fixed;bottom:24px;left:0;right:0;height:0;background:var(--panel2);border-top:1px solid var(--border2);z-index:50;transition:height .28s cubic-bezier(.25,.46,.45,.94);overflow:hidden;display:flex;flex-direction:column}
+.cal-drawer.open{height:44vh}
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;padding:6px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--panel)}
+.cal-body{flex:1;overflow:hidden}
+.cal-body .tradingview-widget-container,.cal-body .tradingview-widget-container__widget{height:100%}
+
+/* STATUS BAR */
+.statusbar{height:24px;flex-shrink:0;border-top:1px solid var(--border);background:var(--panel);display:flex;align-items:center;padding:0 13px;gap:13px;font-family:'Poppins',sans-serif;font-size:8.5px;color:var(--muted);position:relative;z-index:51;letter-spacing:.03em;overflow:hidden}
+.sb-dot{width:5px;height:5px;border-radius:50%;background:var(--green2);display:inline-block;margin-right:5px;vertical-align:middle}
+.sb-dot.w{background:var(--accent)}
+.sb-dot.e{background:var(--red2)}
+.sb-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.cal-btn{font-family:'Poppins',sans-serif;font-size:8px;padding:2px 10px;background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;flex-shrink:0}
+.cal-btn:hover,.cal-btn.on{border-color:var(--accent);color:var(--accent);background:rgba(184,137,58,.07)}
+.kb-hint{color:var(--muted2);cursor:default;letter-spacing:.04em}
+
+/* SETTINGS */
+.s-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;display:none}
+.s-ov.open{display:block}
+.s-panel{position:fixed;top:0;right:-520px;width:500px;height:100vh;background:var(--panel2);border-left:1px solid var(--border2);z-index:100;display:flex;flex-direction:column;transition:right .28s cubic-bezier(.25,.46,.45,.94)}
+.s-panel.open{right:0}
+.s-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--border2);flex-shrink:0;background:var(--panel)}
+.s-ttl{font-family:'Poppins',sans-serif;font-size:11px;letter-spacing:.18em;color:var(--accent)}
+.s-cls{font-family:'Poppins',sans-serif;font-size:10px;color:var(--muted);background:transparent;border:1px solid var(--border2);padding:3px 10px;cursor:pointer;letter-spacing:.1em;transition:all .15s}
+.s-cls:hover{border-color:var(--red);color:var(--red)}
+.s-navs{display:flex;border-bottom:1px solid var(--border2);flex-shrink:0;background:var(--panel);overflow-x:auto}
+.s-navs::-webkit-scrollbar{display:none}
+.s-nav{font-family:'Poppins',sans-serif;font-size:8.5px;padding:9px 10px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.s-nav:hover{color:var(--sub)}
+.s-nav.on{color:var(--accent);border-bottom-color:var(--accent)}
+.s-body{flex:1;overflow-y:auto;padding:16px 18px}
+.s-body::-webkit-scrollbar{width:3px}
+.s-body::-webkit-scrollbar-thumb{background:var(--border2)}
+.s-pg{display:none}.s-pg.on{display:block}
+.s-sec{margin-bottom:22px}
+.s-sec-hdr{font-family:'Poppins',sans-serif;font-size:9px;letter-spacing:.17em;color:var(--muted);text-transform:uppercase;margin-bottom:9px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.s-row{display:flex;align-items:center;padding:8px 10px;border:1px solid var(--border);margin-bottom:3px;background:var(--panel);gap:10px}
+.s-ri{flex:1;min-width:0}
+.s-rl{font-family:'Poppins',sans-serif;font-size:10.5px;color:var(--text)}
+.s-rs{font-size:9px;color:var(--muted);margin-top:2px;word-break:break-all;line-height:1.5}
+.s-acts{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.tog{width:34px;height:18px;border-radius:9px;border:none;background:var(--border2);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.tog.on{background:var(--accent)}
+.tog-k{position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:var(--muted);transition:all .2s;pointer-events:none}
+.tog.on .tog-k{left:19px;background:#fff}
+.s-del{background:transparent;border:1px solid transparent;color:var(--muted2);cursor:pointer;font-size:16px;line-height:1;padding:2px 5px;transition:all .15s;flex-shrink:0}
+.s-del:hover{border-color:var(--red);color:var(--red)}
+.s-add{display:flex;gap:5px;margin-top:9px;align-items:stretch;flex-wrap:wrap}
+.s-inp{background:var(--panel);border:1px solid var(--border2);color:var(--text);padding:7px 10px;font-family:'Poppins',sans-serif;font-size:10px;outline:none;transition:border .15s;min-width:0}
+.s-inp:focus{border-color:var(--accent)}
+.s-inp::placeholder{color:var(--muted2)}
+.s-abtn{font-family:'Poppins',sans-serif;font-size:9px;padding:7px 12px;background:transparent;border:1px solid var(--accent);color:var(--accent);cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.s-abtn:hover{background:rgba(184,137,58,.1)}
+.s-abtn.danger{border-color:var(--red);color:var(--red)}
+.s-abtn.danger:hover{background:rgba(196,64,64,.1)}
+.s-abtn.muted{border-color:var(--border2);color:var(--muted)}
+.s-abtn.muted:hover{border-color:var(--sub);color:var(--sub)}
+.s-note{font-family:'Poppins',sans-serif;font-size:9px;color:var(--muted);line-height:1.9;margin-top:8px;padding:7px 10px;border-left:2px solid var(--border2)}
+.wl-mgr-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.wl-mt{font-family:'Poppins',sans-serif;font-size:9px;padding:4px 11px;background:var(--panel);border:1px solid var(--border2);color:var(--muted);cursor:pointer;letter-spacing:.07em;text-transform:uppercase;transition:all .15s}
+.wl-mt:hover,.wl-mt.on{border-color:var(--accent);color:var(--accent);background:rgba(184,137,58,.07)}
+.s-ft{padding:13px 18px;border-top:1px solid var(--border2);flex-shrink:0;background:var(--panel);display:flex;gap:9px}
+.s-apply{flex:1;font-family:'Poppins',sans-serif;font-size:10px;padding:10px;background:var(--accent);border:none;color:#06080d;cursor:pointer;letter-spacing:.15em;text-transform:uppercase;font-weight:500;transition:background .15s}
+.s-apply:hover{background:var(--accent2)}
+.s-rst{font-family:'Poppins',sans-serif;font-size:9px;padding:10px 14px;background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s}
+.s-rst:hover{border-color:var(--red);color:var(--red)}
+.theme-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.sw{width:30px;height:30px;border-radius:3px;border:2px solid transparent;cursor:pointer;transition:all .15s}
+.sw.on{border-color:#fff;transform:scale(1.08)}
+.sw:hover{transform:scale(1.1)}
+.sw-lbl{font-family:'Poppins',sans-serif;font-size:8px;color:var(--muted);text-align:center;margin-top:3px;display:block;letter-spacing:.06em}
+.opt-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px}
+.opt{font-family:'Poppins',sans-serif;font-size:9px;padding:5px 13px;background:var(--panel);border:1px solid var(--border2);color:var(--muted);cursor:pointer;letter-spacing:.07em;text-transform:uppercase;transition:all .15s}
+.opt:hover{color:var(--sub)}
+.opt.on{border-color:var(--accent);color:var(--accent);background:rgba(184,137,58,.07)}
+.ctog-row{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--border)}
+.ctog-row:last-child{border-bottom:none}
+.ctog-lbl{font-family:'Poppins',sans-serif;font-size:9px;color:var(--text);letter-spacing:.08em;text-transform:uppercase}
+.tz-select{background:var(--panel);border:1px solid var(--border2);color:var(--text);padding:7px 10px;font-family:'Poppins',sans-serif;font-size:9px;outline:none;cursor:pointer;width:100%;letter-spacing:.04em;margin-top:4px;transition:border .15s}
+.tz-select:focus{border-color:var(--accent)}
+.kb-table{width:100%;border-collapse:collapse}
+.kb-table td{padding:6px 9px;border-bottom:1px solid var(--border);font-family:'Poppins',sans-serif;font-size:9.5px;vertical-align:middle}
+.kb-table td:first-child{color:var(--accent);width:80px}
+.kb-table td:last-child{color:var(--muted)}
+.backup-btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ═══════════════════════════════════════════════════════
+   BOLDER VISUAL REDESIGN — OVERRIDES
+   ═══════════════════════════════════════════════════════ */
+
+/* Background gradient */
+body{
+  background-image:
+    radial-gradient(ellipse at 18% 10%,rgba(20,45,120,0.22) 0%,transparent 52%),
+    radial-gradient(ellipse at 82% 88%,rgba(100,50,15,0.15) 0%,transparent 52%)
+}
+
+/* ── HEADER ── */
+.hdr{
+  height:52px;
+  background:rgba(5,8,18,0.94);
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  box-shadow:0 1px 0 rgba(232,168,48,0.1),0 4px 24px rgba(0,0,0,0.5)
+}
+.logo{
+  font-size:13px;letter-spacing:.26em;
+  background:linear-gradient(110deg,var(--accent2) 0%,var(--accent) 55%,#b87820 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+}
+.logo em{
+  background:linear-gradient(110deg,var(--sub),var(--muted));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+}
+.hdr-sep{background:rgba(255,255,255,0.07)}
+
+/* Header panel toggles */
+.ppbtn{
+  border-radius:3px;padding:4px 10px;font-size:8.5px;
+  border-color:rgba(255,255,255,0.08);color:var(--muted);transition:all .18s
+}
+.ppbtn:hover{border-color:rgba(255,255,255,0.18);color:var(--sub)}
+.ppbtn.on{
+  border-color:rgba(232,168,48,0.38);color:var(--accent);
+  background:rgba(232,168,48,0.09);
+  box-shadow:0 0 12px rgba(232,168,48,0.12),inset 0 1px 0 rgba(232,168,48,0.08)
+}
+.hbtn{border-radius:3px;border-color:rgba(255,255,255,0.09);padding:5px 13px}
+.hbtn:hover,.hbtn.on{
+  border-color:rgba(232,168,48,0.4);color:var(--accent);
+  background:rgba(232,168,48,0.08);box-shadow:0 0 10px rgba(232,168,48,0.12)
+}
+
+/* Session indicators */
+.sess-dot.open{box-shadow:0 0 0 2px rgba(0,240,144,0.2),0 0 8px rgba(0,240,144,0.5)}
+
+/* Live dot */
+.ldot{width:7px;height:7px;box-shadow:0 0 8px rgba(0,240,144,0.6)}
+@keyframes pulse{
+  0%,100%{opacity:1;box-shadow:0 0 8px var(--green2),0 0 16px rgba(0,240,144,0.3)}
+  50%{opacity:.15;box-shadow:none}
+}
+
+/* ── TICKER ── */
+.ticker-wrap{background:rgba(5,8,16,0.9);border-bottom:1px solid rgba(255,255,255,0.05)}
+
+/* ── COLUMNS ── */
+.col{border-right:1px solid rgba(255,255,255,0.055)}
+.col-hdr{
+  height:38px;background:rgba(5,8,18,0.96);
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  box-shadow:inset 0 -1px 0 rgba(232,168,48,0.15)
+}
+.col-label{
+  font-size:9.5px;letter-spacing:.24em;
+  background:linear-gradient(90deg,var(--accent2),var(--accent));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+}
+
+/* Pill filter buttons */
+.pbtn{border-radius:30px;padding:3px 11px;border-color:rgba(255,255,255,0.08)}
+.pbtn:hover{border-color:rgba(255,255,255,0.2);color:var(--sub)}
+.pbtn.on{
+  border-color:rgba(232,168,48,0.4);background:rgba(232,168,48,0.1);
+  color:var(--accent);box-shadow:0 0 10px rgba(232,168,48,0.1)
+}
+
+/* ── NEWS PANEL ── */
+.news-search-bar{
+  background:rgba(5,8,18,0.8);padding:6px 10px;
+  border-bottom:1px solid rgba(255,255,255,0.05)
+}
+.news-search-inp{
+  border-radius:3px;border-color:rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03)
+}
+.news-search-inp:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 2px rgba(232,168,48,0.07),0 0 12px rgba(232,168,48,0.06)
+}
+.news-scroll{padding:6px 5px}
+.ni{
+  border-radius:5px;margin-bottom:5px;
+  border:1px solid rgba(255,255,255,0.055);border-left:2px solid transparent;
+  background:rgba(8,14,26,0.75);padding:10px 12px;
+  transition:all .17s cubic-bezier(.25,.46,.45,.94);
+  box-shadow:0 2px 8px rgba(0,0,0,0.25)
+}
+.ni:last-child{margin-bottom:0}
+.ni:hover{
+  background:rgba(12,20,38,0.92);
+  border-color:rgba(255,255,255,0.1);border-left-color:var(--accent);
+  transform:translateY(-1px);
+  box-shadow:0 5px 20px rgba(0,0,0,0.4),0 0 0 1px rgba(232,168,48,0.06)
+}
+.ni.read{opacity:.36}
+.ni-src{
+  font-size:9px;letter-spacing:.11em;
+  background:linear-gradient(90deg,var(--accent2),var(--accent));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+}
+.ni-title{font-size:var(--news-fs);line-height:1.56;color:var(--text)}
+.ni-meta{margin-bottom:5px}
+
+/* ── BROADCAST ── */
+.stream-grid{background:#020408}
+.slot-ov{background:rgba(6,10,20,0.94)}
+.slot-ov-lnk{border-radius:3px;border-color:rgba(255,255,255,0.1)}
+.slot-ov-lnk:hover{border-color:var(--accent);background:rgba(232,168,48,0.08);box-shadow:0 0 10px rgba(232,168,48,0.1)}
+
+/* ── RESIZE HANDLES ── */
+.rh{
+  width:4px;background:rgba(255,255,255,0.02);
+  border:none;border-right:1px solid rgba(255,255,255,0.04);border-left:1px solid rgba(255,255,255,0.02)
+}
+.rh:hover,.rh.dragging{background:rgba(232,168,48,0.05);border-right-color:rgba(232,168,48,0.2);border-left-color:rgba(232,168,48,0.1)}
+.rh::after{background:rgba(255,255,255,0.1);width:1px;height:30px}
+.rh:hover::after,.rh.dragging::after{background:var(--accent);height:50px;width:2px;box-shadow:0 0 8px rgba(232,168,48,0.5)}
+
+/* ── WATCHLIST ── */
+.wl-tabs{background:rgba(5,8,18,0.96);border-bottom:1px solid rgba(255,255,255,0.06)}
+.wl-tab{font-size:9px;letter-spacing:.12em;padding:8px 15px;transition:all .17s}
+.wl-tab:hover{color:var(--sub)}
+.wl-tab.on{color:var(--accent);border-bottom-color:var(--accent);text-shadow:0 0 14px rgba(232,168,48,0.28)}
+.wl-table th{
+  background:rgba(5,8,18,0.98);border-bottom:1px solid rgba(255,255,255,0.07);
+  padding:7px 8px;font-size:8.5px;letter-spacing:.1em
+}
+.wl-table td{border-bottom:1px solid rgba(255,255,255,0.04)}
+.wl-table tr:hover td{background:rgba(232,168,48,0.035)}
+.wl-table tr:hover td:first-child{border-left:2px solid var(--accent)}
+.wl-name{font-size:13px}
+.wl-price{font-size:13px}
+.up{color:var(--green2);text-shadow:0 0 12px rgba(0,240,144,0.18)}
+.dn{color:var(--red2);text-shadow:0 0 12px rgba(240,112,112,0.12)}
+.wl-mstate.regular{background:var(--green2);box-shadow:0 0 7px rgba(0,240,144,0.55)}
+.wl-mstate.pre,.wl-mstate.post{box-shadow:0 0 6px rgba(232,168,48,0.4)}
+.wl-range-bar{background:rgba(255,255,255,0.07)}
+.wl-range-fill{background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:0 0 5px rgba(232,168,48,0.35)}
+.wl-foot{background:rgba(5,8,18,0.96);border-top:1px solid rgba(255,255,255,0.06);padding:5px 12px}
+
+/* ── STATUS BAR ── */
+.statusbar{
+  height:26px;background:rgba(3,5,12,0.97);
+  border-top:1px solid rgba(255,255,255,0.055);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 -1px 0 rgba(232,168,48,0.06)
+}
+.sb-dot{width:6px;height:6px}
+.sb-dot:not(.w):not(.e){background:var(--green2);box-shadow:0 0 7px rgba(0,240,144,0.45)}
+.sb-dot.w{background:var(--accent);box-shadow:0 0 6px rgba(232,168,48,0.35)}
+.sb-dot.e{background:var(--red2);box-shadow:0 0 6px rgba(240,112,112,0.35)}
+.cal-btn{border-radius:30px;padding:2px 12px;border-color:rgba(255,255,255,0.08)}
+.cal-btn:hover,.cal-btn.on{border-color:rgba(232,168,48,0.35);box-shadow:0 0 10px rgba(232,168,48,0.1)}
+
+/* ── CHART MODAL ── */
+.chart-modal{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:rgba(2,4,10,0.82)}
+.chart-modal-inner{
+  border-radius:6px;border:1px solid rgba(255,255,255,0.1);
+  box-shadow:0 24px 80px rgba(0,0,0,0.85),0 0 0 1px rgba(232,168,48,0.07)
+}
+.chart-modal-hdr{background:rgba(5,8,18,0.99);border-bottom:1px solid rgba(255,255,255,0.07);border-radius:6px 6px 0 0}
+
+/* ── CALENDAR DRAWER ── */
+.cal-drawer{
+  background:rgba(4,7,16,0.97);border-top:1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)
+}
+.cal-hdr{background:rgba(3,5,12,0.95);border-bottom:1px solid rgba(255,255,255,0.07)}
+
+/* ── SETTINGS PANEL ── */
+.s-panel{
+  background:rgba(4,7,16,0.97);border-left:1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)
+}
+.s-hdr{background:rgba(3,5,12,0.98);border-bottom:1px solid rgba(255,255,255,0.07)}
+.s-cls{border-radius:3px;border-color:rgba(255,255,255,0.09)}
+.s-cls:hover{border-color:var(--red2);color:var(--red2)}
+.s-navs{background:rgba(4,7,16,0.9);border-bottom:1px solid rgba(255,255,255,0.06)}
+.s-nav.on{color:var(--accent);border-bottom-color:var(--accent);text-shadow:0 0 12px rgba(232,168,48,0.2)}
+.s-row{border-radius:4px;border:1px solid rgba(255,255,255,0.06);background:rgba(8,14,26,0.7)}
+.s-sec-hdr{border-bottom:1px solid rgba(255,255,255,0.07)}
+.s-inp{border-radius:3px;border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.03)}
+.s-inp:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(232,168,48,0.07)}
+.s-abtn{border-radius:3px;transition:all .17s}
+.s-abtn:hover{box-shadow:0 0 12px rgba(232,168,48,0.12)}
+.tog{border-radius:10px}
+.tog.on{background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:0 0 10px rgba(232,168,48,0.2)}
+.s-ft{background:rgba(3,5,12,0.98);border-top:1px solid rgba(255,255,255,0.07)}
+.s-apply{
+  border-radius:3px;
+  background:linear-gradient(110deg,var(--accent),var(--accent2));
+  color:#050710;font-weight:600;box-shadow:0 4px 18px rgba(232,168,48,0.22)
+}
+.s-apply:hover{background:linear-gradient(110deg,var(--accent2),var(--accent));box-shadow:0 4px 22px rgba(232,168,48,0.32)}
+.s-rst{border-radius:3px;border-color:rgba(255,255,255,0.08)}
+.s-rst:hover{border-color:var(--red2);color:var(--red2)}
+.sw{border-radius:4px}
+.wl-mt{border-radius:3px}
+.opt{border-radius:3px}
+.opt.on{box-shadow:0 0 8px rgba(232,168,48,0.1)}
+.s-note{border-left:2px solid rgba(232,168,48,0.25);background:rgba(232,168,48,0.03);border-radius:0 3px 3px 0}
+.kb-table td{border-bottom:1px solid rgba(255,255,255,0.05)}
+.kb-table td:first-child{color:var(--accent)}
+.retry{border-radius:3px}
+
+/* ── SCROLLBARS ── */
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.09);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(232,168,48,0.3);border-radius:3px}
+
+/* ── NOTICE BAR ── */
+.notice{background:rgba(232,168,48,0.04);border-bottom:1px solid rgba(232,168,48,0.1)}
+
+/* ── POPPINS SIZE FIXES: minimum 10px, weighted for small elements ── */
+.logo{font-size:13px;font-weight:600}
+.ppbtn{font-size:10px;font-weight:500}
+.hbtn{font-size:10px;font-weight:500}
+.col-label{font-size:10.5px;font-weight:600}
+.pbtn{font-size:9.5px;font-weight:500}
+.wl-tab{font-size:10px;font-weight:500}
+.wl-tab.on{font-weight:600}
+.wl-table th{font-size:9.5px;font-weight:600}
+.wl-name{font-size:13px;font-weight:500}
+.wl-price{font-size:13px;font-weight:500}
+.wl-vol{font-size:12px}
+.wl-52w{font-size:10px}
+.wl-range-vals{font-size:9px}
+.wl-sym{font-size:9.5px}
+.wl-ts{font-size:9.5px}
+.wl-msg{font-size:11px}
+.ni-src{font-size:10px;font-weight:600}
+.ni-time{font-size:10px}
+.ni-dot{font-size:9.5px}
+.ni-title{font-size:12.5px;line-height:1.55}
+.ni-desc{font-size:10px}
+.ni-msg{font-size:11px}
+.live{font-size:10px;font-weight:600}
+.sess{font-size:10px;font-weight:500}
+.clk-t{font-size:13px}
+.clk-d{font-size:10px}
+.clk2-t{font-size:12px}
+.clk2-l{font-size:9.5px}
+.stream-grid-count{font-size:9.5px}
+.slot-label{font-size:9.5px}
+.s-ttl{font-size:12px;font-weight:600}
+.s-cls{font-size:10px}
+.s-nav{font-size:9.5px;font-weight:500}
+.s-nav.on{font-weight:600}
+.s-sec-hdr{font-size:10px;font-weight:600}
+.s-rl{font-size:11px;font-weight:500}
+.s-rs{font-size:10px}
+.s-inp{font-size:11px}
+.s-abtn{font-size:10px;font-weight:500}
+.s-apply{font-size:11px;font-weight:600}
+.s-rst{font-size:10px}
+.s-note{font-size:10px}
+.ctog-lbl{font-size:10px;font-weight:500}
+.wl-mt{font-size:10px}
+.opt{font-size:10px}
+.sw-lbl{font-size:9.5px}
+.news-search-inp{font-size:10.5px}
+.statusbar{font-size:10px}
+.cal-btn{font-size:9.5px;font-weight:500}
+.kb-hint{font-size:9.5px}
+.chart-modal-title{font-size:11px;font-weight:600}
+.kb-table td{font-size:10.5px}
+.retry{font-size:10px}
+
+/* ── REDUCE BACKDROP BLUR so it doesn't bleed into text ── */
+.hdr{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.statusbar{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.s-panel{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.cal-drawer{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+/* ── FONT RENDERING ── */
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
+
+/* ── CONTRAST: brighter muted palette ── */
+:root{
+  --text:#eaf2ff;
+  --sub:#b0c8e0;
+  --muted:#7a96b4;
+  --muted2:#506880;
+}
+
+/* Tighten letter-spacing for JetBrains Mono elements — IBM Plex values are too wide */
+.logo{letter-spacing:.18em}
+.logo em{letter-spacing:.06em}
+.ppbtn{letter-spacing:.06em}
+.hbtn{letter-spacing:.08em}
+.col-label{letter-spacing:.16em}
+.pbtn{letter-spacing:.04em}
+.wl-tab{letter-spacing:.08em}
+.wl-table th{letter-spacing:.06em}
+.ni-src{letter-spacing:.07em}
+.ni-time{letter-spacing:.02em}
+.live{letter-spacing:.1em}
+.sess{letter-spacing:.06em}
+.clk-t{letter-spacing:.02em}
+.clk-d{letter-spacing:.03em}
+.clk2-t{letter-spacing:.02em}
+.clk2-l{letter-spacing:.04em}
+.s-ttl{letter-spacing:.14em}
+.s-nav{letter-spacing:.07em}
+.s-sec-hdr{letter-spacing:.12em}
+.s-rl{letter-spacing:0}
+.s-apply{letter-spacing:.1em}
+.s-rst{letter-spacing:.07em}
+.s-abtn{letter-spacing:.07em}
+.wl-ts{letter-spacing:.03em}
+.statusbar{letter-spacing:.02em}
+.cal-btn{letter-spacing:.07em}
+.kb-hint{letter-spacing:.03em}
+.wl-msg{letter-spacing:.03em}
+.ni-msg{letter-spacing:.03em}
+.ni-desc{letter-spacing:0}
+.s-note{letter-spacing:.01em}
+.wl-range-vals{letter-spacing:0}
+.stream-grid-count{letter-spacing:.04em}
+.slot-label{letter-spacing:.07em}
+.s-inp{letter-spacing:.02em}
+.s-inp::placeholder{letter-spacing:.02em}
+.news-search-inp{letter-spacing:.03em}
+.wl-sym{letter-spacing:.03em}
+</style>
+</head>
+<body>
+
+<div class="notice" id="notice">
+  <span>&#9888;&nbsp; Serve via &nbsp;</span><code>python -m http.server 8080</code>
+  <span>&nbsp; then open &nbsp;</span><code>localhost:8080/wam_v7.html</code>
+  <button class="nx" id="noticeX">&#215;</button>
+</div>
+
+<div class="hdr">
+  <div class="logo">MARKET INTELLIGENCE</em></div>
+  <div class="hdr-sep"></div>
+  <div class="hdr-panels">
+    <button class="ppbtn on" id="ppNews" title="Toggle News [Alt+1]">NEWS</button>
+    <button class="ppbtn on" id="ppBroadcast" title="Toggle Broadcast [Alt+2]">BCAST</button>
+    <button class="ppbtn on" id="ppWatch" title="Toggle Watchlist [Alt+3]">WATCH</button>
+  </div>
+  <div class="hdr-sep"></div>
+  <div class="sessions" id="sessions">
+    <div class="sess" title="Tokyo Stock Exchange"><div class="sess-dot" id="sTyo"></div><span>TYO</span></div>
+    <div class="sess" title="London Stock Exchange"><div class="sess-dot" id="sLon"></div><span>LON</span></div>
+    <div class="sess" title="NYSE / NASDAQ"><div class="sess-dot" id="sNyc"></div><span>NYC</span></div>
+    <div class="sess" title="Tadawul / GCC"><div class="sess-dot" id="sGcc"></div><span>GCC</span></div>
+  </div>
+  <div class="hdr-r">
+    <button class="hbtn" id="cfgBtn">&#9881; CONFIGURE</button>
+    <div class="live"><div class="ldot"></div>LIVE</div>
+    <div class="clocks">
+      <div class="clk">
+        <div class="clk-t" id="clk">--:--:--</div>
+        <div class="clk-d" id="clkd">---</div>
+      </div>
+      <div class="clk2" id="clk2" style="display:none">
+        <div class="clk2-t" id="clk2t">--:--</div>
+        <div class="clk2-l" id="clk2l">---</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ticker-wrap">
+  <div class="tradingview-widget-container" id="tickerCont" style="height:100%">
+    <div class="tradingview-widget-container__widget"></div>
+  </div>
+</div>
+
+<div class="main" id="mainArea">
+
+  <!-- NEWS -->
+  <div class="col" id="colNews">
+    <div class="col-hdr">
+      <span class="col-label">LIVE FEED</span>
+      <div class="pills" id="filterBtns"></div>
+      <button class="pbtn" id="newsSearchToggle" title="Search headlines [S]" style="flex-shrink:0">&#9906;</button>
+    </div>
+    <div class="news-search-bar" id="newsSearchBar" style="display:none">
+      <input type="text" class="news-search-inp" id="newsSearch" placeholder="SEARCH HEADLINES...">
+    </div>
+    <div class="news-scroll" id="newsList"><div class="ni-msg">FETCHING FEEDS...</div></div>
+  </div>
+
+  <div class="rh" id="rh1"></div>
+
+  <!-- BROADCAST -->
+  <div class="col" id="colBroadcast">
+    <div class="col-hdr">
+      <span class="col-label">BROADCAST</span>
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;justify-content:flex-end">
+        <span class="stream-grid-count" id="streamCount"></span>
+        <div class="pills" id="streamBtns"></div>
+      </div>
+    </div>
+    <div class="stream-grid" id="streamGrid" data-count="0">
+      <div class="stream-empty"><div class="sf-icon">&#9654;</div><div>SELECT A CHANNEL</div></div>
+    </div>
+  </div>
+
+  <div class="rh" id="rh2"></div>
+
+  <!-- WATCHLIST -->
+  <div class="col" id="colWatch">
+    <div class="col-hdr">
+      <span class="col-label">WATCHLIST</span>
+      <div style="display:flex;align-items:center;gap:7px">
+        <span class="wl-ts" id="wlStat" style="font-size:8px;color:var(--muted)">—</span>
+        <button class="pbtn" id="wlRefBtn" title="Refresh [R]">&#8635;</button>
+      </div>
+    </div>
+    <div class="wl-tabs" id="wlTabs"></div>
+    <div class="wl-body" id="wlBody"><div class="wl-msg">LOADING...</div></div>
+    <div class="wl-foot">
+      <span class="wl-ts" id="wlTs">—</span>
+      <span class="wl-ts" id="wlRefLabel">AUTO-REFRESH 30s · YF</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- CHART MODAL -->
+<div class="chart-modal" id="chartModal">
+  <div class="chart-modal-inner">
+    <div class="chart-modal-hdr">
+      <span class="chart-modal-title" id="chartModalTitle">CHART</span>
+      <button class="hbtn" id="chartModalClose">&#215; CLOSE</button>
+    </div>
+    <div class="chart-modal-body" id="chartModalBody"></div>
+  </div>
+</div>
+
+<!-- CALENDAR DRAWER -->
+<div class="cal-drawer" id="calDrawer">
+  <div class="cal-hdr">
+    <span style="font-family:'Poppins',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.15em">ECONOMIC CALENDAR · GCC / G7 / ASIA</span>
+    <button class="hbtn" id="calClose">CLOSE &#215;</button>
+  </div>
+  <div class="cal-body" id="calBody"></div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <span><span class="sb-dot" id="sdTicker"></span>TICKER</span>
+  <span><span class="sb-dot w" id="sdPrices"></span>PRICES</span>
+  <span><span class="sb-dot w" id="sdNews"></span>NEWS</span>
+  <span><span class="sb-dot w" id="sdStream"></span>STREAM</span>
+  <span id="feedStat" style="color:var(--muted2)">LOADING...</span>
+  <span id="sbFng" style="color:var(--muted2)"></span>
+  <div class="sb-r">
+    <span class="kb-hint">?=SHORTCUTS</span>
+    <button class="cal-btn" id="calToggle">&#128198; CALENDAR</button>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="s-ov" id="sOv"></div>
+<div class="s-panel" id="sPanel">
+  <div class="s-hdr">
+    <span class="s-ttl">CONFIGURE DASHBOARD</span>
+    <button class="s-cls" id="sClose">CLOSE &#215;</button>
+  </div>
+  <div class="s-navs" id="sNavs">
+    <button class="s-nav on" data-pg="symbols">SYMBOLS</button>
+    <button class="s-nav" data-pg="feeds">FEEDS</button>
+    <button class="s-nav" data-pg="streams">BROADCAST</button>
+    <button class="s-nav" data-pg="layout">LAYOUT</button>
+    <button class="s-nav" data-pg="appearance">APPEARANCE</button>
+    <button class="s-nav" data-pg="behavior">BEHAVIOR</button>
+    <button class="s-nav" data-pg="backup">BACKUP</button>
+    <button class="s-nav" data-pg="shortcuts">SHORTCUTS</button>
+  </div>
+  <div class="s-body">
+
+    <!-- SYMBOLS -->
+    <div class="s-pg on" id="pg-symbols">
+      <div class="s-sec">
+        <div class="s-sec-hdr">TICKER TAPE SYMBOLS</div>
+        <div id="tickerList"></div>
+        <div class="s-add">
+          <input class="s-inp" id="tSym" placeholder="EXCHANGE:SYMBOL  e.g. COMEX:GC1!" style="flex:2">
+          <input class="s-inp" id="tLbl" placeholder="Label" style="flex:1;max-width:100px">
+          <button class="s-abtn" id="addTkBtn">+ ADD</button>
+        </div>
+        <div class="s-note">TradingView format: COMEX:GC1! · FX:EURUSD · TVC:US10Y · INDEX:TADAWUL · NASDAQ:NVDA</div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">WATCHLIST TABS</div>
+        <div class="wl-mgr-tabs" id="wlMgrTabs"></div>
+        <div class="s-add" style="margin-bottom:9px">
+          <input class="s-inp" id="newTab" placeholder="New tab name" style="flex:1">
+          <button class="s-abtn" id="addTabBtn">+ TAB</button>
+          <button class="s-abtn danger" id="delTabBtn">&#215; TAB</button>
+        </div>
+        <div class="s-sec-hdr" style="margin-top:4px">SYMBOLS IN SELECTED TAB</div>
+        <div id="wlSymList"></div>
+        <div class="s-add">
+          <input class="s-inp" id="wYf" placeholder="Yahoo Finance symbol" style="flex:2">
+          <input class="s-inp" id="wName" placeholder="Display name" style="flex:1;max-width:110px">
+          <input class="s-inp" id="wTv" placeholder="TV sym (opt)" style="flex:0 0 120px">
+          <button class="s-abtn" id="addWlBtn">+ ADD</button>
+        </div>
+        <div class="s-note">
+          Indices: ^GSPC · ^NDX · ^GDAXI · ^FTSE · ^N225 · ^TASI.SR · ^DFMGI<br>
+          Commodities: GC=F · CL=F · BZ=F · NG=F · SI=F · HG=F<br>
+          FX: EURUSD=X · JPY=X · DX-Y.NYB · SAR=X · ^TNX<br>
+          TV symbol (optional): used for chart modal e.g. COMEX:GC1! · FX:EURUSD
+        </div>
+      </div>
+    </div>
+
+    <!-- FEEDS -->
+    <div class="s-pg" id="pg-feeds">
+      <div class="s-sec">
+        <div class="s-sec-hdr">NEWS FEEDS</div>
+        <div id="feedList"></div>
+        <div class="s-add">
+          <input class="s-inp" id="fName" placeholder="Name" style="flex:0 0 110px">
+          <input class="s-inp" id="fUrl" placeholder="RSS feed URL" style="flex:1">
+          <button class="s-abtn" id="addFdBtn">+ ADD</button>
+        </div>
+        <div class="s-note">Any public RSS/Atom URL. Fetched via rss2json.com then CORS proxies as fallback.</div>
+      </div>
+    </div>
+
+    <!-- BROADCAST -->
+    <div class="s-pg" id="pg-streams">
+      <div class="s-sec">
+        <div class="s-sec-hdr">BROADCAST CHANNELS</div>
+        <div id="streamList"></div>
+        <div class="s-add" style="flex-wrap:wrap">
+          <input class="s-inp" id="sName" placeholder="Name" style="flex:0 0 80px">
+          <input class="s-inp" id="sEmbed" placeholder="YouTube embed code, URL, or video ID" style="flex:1;min-width:200px">
+          <input class="s-inp" id="sCid" placeholder="Channel ID fallback (UC...)" style="flex:0 0 200px">
+          <button class="s-abtn" id="addStBtn">+ ADD</button>
+        </div>
+        <div class="s-note">
+          <strong style="color:var(--sub)">Embed code:</strong> Share &rarr; Embed from any YouTube live stream.<br>
+          <strong style="color:var(--sub)">Video ID:</strong> The 11-char ID from the embed URL e.g. <span style="color:var(--accent)">bNyUyrR0PHo</span><br>
+          <strong style="color:var(--sub)">Channel ID:</strong> UCxxxxxxxx format, used as fallback only.
+        </div>
+      </div>
+    </div>
+
+    <!-- LAYOUT -->
+    <div class="s-pg" id="pg-layout">
+      <div class="s-sec">
+        <div class="s-sec-hdr">PANEL VISIBILITY</div>
+        <div class="ctog-row"><button class="tog on" id="cfgShowNews"><div class="tog-k"></div></button><span class="ctog-lbl">NEWS PANEL</span></div>
+        <div class="ctog-row"><button class="tog on" id="cfgShowBroadcast"><div class="tog-k"></div></button><span class="ctog-lbl">BROADCAST PANEL</span></div>
+        <div class="ctog-row"><button class="tog on" id="cfgShowWatch"><div class="tog-k"></div></button><span class="ctog-lbl">WATCHLIST PANEL</span></div>
+        <div class="s-note">Visibility changes apply immediately and persist across sessions.</div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">LAYOUT PRESETS</div>
+        <div class="opt-row">
+          <button class="opt" data-preset="standard">STANDARD</button>
+          <button class="opt" data-preset="nobroadcast">NO BROADCAST</button>
+          <button class="opt" data-preset="widewatch">WIDE WATCH</button>
+          <button class="opt" data-preset="widenews">WIDE NEWS</button>
+          <button class="opt" data-preset="focus">FOCUS</button>
+        </div>
+        <div class="s-note">Presets adjust column widths and panel visibility. Columns remain draggable after applying.</div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">MAX SIMULTANEOUS STREAMS</div>
+        <div class="opt-row" id="maxSlotsOpts">
+          <button class="opt" data-ms="1">1</button>
+          <button class="opt" data-ms="2">2</button>
+          <button class="opt on" data-ms="4">4</button>
+          <button class="opt" data-ms="6">6</button>
+        </div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">SECONDARY TIMEZONE</div>
+        <select class="tz-select" id="tzSelect">
+          <option value="">None</option>
+          <option value="America/New_York|NY EST">New York (EST/EDT)</option>
+          <option value="Europe/London|LON GMT">London (GMT/BST)</option>
+          <option value="Europe/Berlin|FRA CET">Frankfurt (CET/CEST)</option>
+          <option value="Asia/Singapore|SGP SGT">Singapore (SGT)</option>
+          <option value="Asia/Tokyo|TYO JST">Tokyo (JST)</option>
+          <option value="America/Los_Angeles|LAX PST">Los Angeles (PST/PDT)</option>
+          <option value="Asia/Hong_Kong|HKG HKT">Hong Kong (HKT)</option>
+          <option value="Europe/Zurich|ZUR CET">Zurich (CET/CEST)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- APPEARANCE -->
+    <div class="s-pg" id="pg-appearance">
+      <div class="s-sec">
+        <div class="s-sec-hdr">ACCENT COLOR</div>
+        <div class="theme-swatches" id="swatches"></div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">NEWS FONT SIZE</div>
+        <div class="opt-row" id="newsSizeOpts">
+          <button class="opt" data-ns="sm">SMALL</button>
+          <button class="opt on" data-ns="md">MEDIUM</button>
+          <button class="opt" data-ns="lg">LARGE</button>
+        </div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">WATCHLIST ROW DENSITY</div>
+        <div class="opt-row" id="densityOpts">
+          <button class="opt" data-dens="compact">COMPACT</button>
+          <button class="opt on" data-dens="normal">NORMAL</button>
+        </div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">WATCHLIST COLUMNS</div>
+        <div class="ctog-row"><button class="tog on" id="wlcPrice"><div class="tog-k"></div></button><span class="ctog-lbl">LAST PRICE</span></div>
+        <div class="ctog-row"><button class="tog on" id="wlcChg"><div class="tog-k"></div></button><span class="ctog-lbl">CHANGE</span></div>
+        <div class="ctog-row"><button class="tog on" id="wlcPct"><div class="tog-k"></div></button><span class="ctog-lbl">CHANGE %</span></div>
+        <div class="ctog-row"><button class="tog on" id="wlcSpark"><div class="tog-k"></div></button><span class="ctog-lbl">5-DAY SPARKLINE</span></div>
+        <div class="ctog-row"><button class="tog" id="wlcRange"><div class="tog-k"></div></button><span class="ctog-lbl">DAY RANGE BAR</span></div>
+        <div class="ctog-row"><button class="tog" id="wlcVol"><div class="tog-k"></div></button><span class="ctog-lbl">VOLUME</span></div>
+        <div class="ctog-row"><button class="tog" id="wlcWk52"><div class="tog-k"></div></button><span class="ctog-lbl">52-WEEK HIGH / LOW</span></div>
+        <div class="s-note">Click any watchlist row to open its TradingView chart. Market state indicator visible on all rows.</div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">NEWS DESCRIPTION PREVIEW</div>
+        <div class="ctog-row"><button class="tog" id="cfgShowDesc"><div class="tog-k"></div></button><span class="ctog-lbl">SHOW ARTICLE SNIPPETS</span></div>
+        <div class="s-note">Shows a brief summary below each headline where RSS feed provides one.</div>
+      </div>
+    </div>
+
+    <!-- BEHAVIOR -->
+    <div class="s-pg" id="pg-behavior">
+      <div class="s-sec">
+        <div class="s-sec-hdr">NEWS AUTO-REFRESH</div>
+        <div class="opt-row" id="newsRefOpts">
+          <button class="opt" data-nr="180">3 MIN</button>
+          <button class="opt on" data-nr="300">5 MIN</button>
+          <button class="opt" data-nr="600">10 MIN</button>
+          <button class="opt" data-nr="900">15 MIN</button>
+        </div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">WATCHLIST AUTO-REFRESH</div>
+        <div class="opt-row" id="wlRefOpts">
+          <button class="opt" data-wr="15">15 SEC</button>
+          <button class="opt on" data-wr="30">30 SEC</button>
+          <button class="opt" data-wr="60">60 SEC</button>
+          <button class="opt" data-wr="120">2 MIN</button>
+        </div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">AUTO-LOAD STREAMS ON STARTUP</div>
+        <div class="opt-row" id="autoStreamOpts">
+          <button class="opt on" data-as="1">ON</button>
+          <button class="opt" data-as="0">OFF</button>
+        </div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">FEAR &amp; GREED INDEX</div>
+        <div class="ctog-row"><button class="tog on" id="cfgShowFng"><div class="tog-k"></div></button><span class="ctog-lbl">SHOW IN STATUS BAR</span></div>
+        <div class="s-note">Source: alternative.me API · Crypto-derived market sentiment · Refreshed hourly.</div>
+      </div>
+    </div>
+
+    <!-- BACKUP -->
+    <div class="s-pg" id="pg-backup">
+      <div class="s-sec">
+        <div class="s-sec-hdr">EXPORT CONFIGURATION</div>
+        <p style="font-family:'Poppins',sans-serif;font-size:9px;color:var(--muted);line-height:1.9;margin-bottom:10px">Downloads your complete dashboard state as a JSON file including all watchlists, feeds, streams, tickers, layout, and appearance settings.</p>
+        <div class="backup-btns">
+          <button class="s-abtn" id="exportBtn">&#8681; EXPORT JSON</button>
+        </div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">IMPORT CONFIGURATION</div>
+        <p style="font-family:'Poppins',sans-serif;font-size:9px;color:var(--muted);line-height:1.9;margin-bottom:10px">Restores a previously exported configuration. Overwrites all current settings.</p>
+        <div class="backup-btns">
+          <button class="s-abtn" id="importBtn">&#8679; IMPORT JSON</button>
+          <input type="file" id="importFile" accept=".json" style="display:none">
+        </div>
+        <div id="importStatus" style="font-family:'Poppins',sans-serif;font-size:9px;margin-top:8px"></div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">CLEAR ALL DATA</div>
+        <div class="backup-btns">
+          <button class="s-abtn danger" id="clearDataBtn">&#9888; CLEAR LOCALSTORAGE</button>
+        </div>
+        <div class="s-note">Removes all saved settings from browser storage. Dashboard reverts to factory defaults on next load.</div>
+      </div>
+    </div>
+
+    <!-- SHORTCUTS -->
+    <div class="s-pg" id="pg-shortcuts">
+      <div class="s-sec">
+        <div class="s-sec-hdr">KEYBOARD SHORTCUTS</div>
+        <table class="kb-table">
+          <tr><td>R</td><td>Refresh watchlist prices</td></tr>
+          <tr><td>N</td><td>Refresh news feed</td></tr>
+          <tr><td>S</td><td>Toggle news search bar</td></tr>
+          <tr><td>1 – 9</td><td>Switch watchlist tab 1 through 9</td></tr>
+          <tr><td>C</td><td>Toggle economic calendar</td></tr>
+          <tr><td>,</td><td>Open settings panel</td></tr>
+          <tr><td>Esc</td><td>Close chart / settings / calendar</td></tr>
+          <tr><td>?</td><td>Open this shortcuts page</td></tr>
+          <tr><td>Alt + 1</td><td>Toggle news panel</td></tr>
+          <tr><td>Alt + 2</td><td>Toggle broadcast panel</td></tr>
+          <tr><td>Alt + 3</td><td>Toggle watchlist panel</td></tr>
+        </table>
+        <div class="s-note" style="margin-top:12px">Shortcuts inactive when a text input is focused. Drag column handles to resize panels. Click any watchlist row to open its TradingView chart.</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="s-ft">
+    <button class="s-rst" id="sRst">RESET DEFAULTS</button>
+    <button class="s-apply" id="sApply">APPLY &amp; SAVE</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// THEME PRESETS
+// ══════════════════════════════════════════════
+const THEMES={
+  gold:  {accent:'#b8893a',accent2:'#d4a958',label:'GOLD'},
+  cyan:  {accent:'#2aacac',accent2:'#40cece',label:'CYAN'},
+  blue:  {accent:'#3a6eb8',accent2:'#5888d4',label:'BLUE'},
+  purple:{accent:'#8a3ab8',accent2:'#a455d0',label:'PURP'},
+  green: {accent:'#2aaa6a',accent2:'#30c47a',label:'GRN'},
+  rose:  {accent:'#b83a6e',accent2:'#d45888',label:'ROSE'},
+  steel: {accent:'#607090',accent2:'#8090b0',label:'STEEL'},
+};
+
+// ══════════════════════════════════════════════
+// YF → TRADINGVIEW SYMBOL MAP
+// ══════════════════════════════════════════════
+const YF_TO_TV={
+  '^GSPC':'SP:SPX','^NDX':'NASDAQ:NDX','^DJI':'DJ:DJI','^FTSE':'LSE:UKX',
+  '^GDAXI':'XETRA:DAX','^N225':'TVC:NI225','^HSI':'TVC:HSI',
+  '^TASI.SR':'INDEX:TADAWUL','^DFMGI':'DFM:DFMGI','^ADI':'INDEX:ADI','^QSI':'INDEX:QSI',
+  'GC=F':'COMEX:GC1!','SI=F':'COMEX:SI1!','CL=F':'NYMEX:CL1!','BZ=F':'NYMEX:BB1!',
+  'NG=F':'NYMEX:NG1!','HG=F':'COMEX:HG1!','ZW=F':'CBOT:ZW1!','PA=F':'NYMEX:PA1!',
+  'ZB=F':'CBOT:ZB1!','ZN=F':'CBOT:ZN1!',
+  'EURUSD=X':'FX:EURUSD','GBPUSD=X':'FX:GBPUSD','JPY=X':'FX:USDJPY',
+  'CHF=X':'FX:USDCHF','DX-Y.NYB':'TVC:DXY','SAR=X':'FX:USDSAR',
+  '^TNX':'TVC:US10Y','^IRX':'TVC:US02Y','^TYX':'TVC:US30Y','^GDBR10':'TVC:DE10Y',
+  '2222.SR':'TADAWUL:2222','^VIX':'CBOE:VIX',
+  'AAPL':'NASDAQ:AAPL','MSFT':'NASDAQ:MSFT','NVDA':'NASDAQ:NVDA',
+  'GOOGL':'NASDAQ:GOOGL','META':'NASDAQ:META','AMZN':'NASDAQ:AMZN','TSLA':'NASDAQ:TSLA',
+  'PANW':'NASDAQ:PANW','DELL':'NYSE:DELL','2222.SR':'TADAWUL:2222',
+};
+function yfToTv(sym){
+  if(YF_TO_TV[sym])return YF_TO_TV[sym];
+  if(/^[A-Z]{1,6}$/.test(sym))return'NASDAQ:'+sym;
+  return sym;
+}
+
+// ══════════════════════════════════════════════
+// DEFAULTS
+// ══════════════════════════════════════════════
+const DEFAULTS={
+  tickers:[
+    {sym:'FOREXCOM:SPXUSD',label:'S&P 500'},{sym:'FOREXCOM:NSXUSD',label:'Nasdaq 100'},
+    {sym:'FOREXCOM:DJI',label:'Dow 30'},{sym:'INDEX:UKX',label:'FTSE 100'},
+    {sym:'INDEX:DEU40',label:'DAX'},{sym:'INDEX:NKY',label:'Nikkei'},
+    {sym:'COMEX:GC1!',label:'Gold'},{sym:'NYMEX:BB1!',label:'Brent'},
+    {sym:'NYMEX:CL1!',label:'WTI'},{sym:'NYMEX:NG1!',label:'Nat Gas'},
+    {sym:'TVC:DXY',label:'DXY'},{sym:'TVC:US10Y',label:'US 10Y'},
+    {sym:'TVC:US02Y',label:'US 2Y'},{sym:'FX:EURUSD',label:'EUR/USD'},
+    {sym:'FX:GBPUSD',label:'GBP/USD'},{sym:'FX:USDJPY',label:'USD/JPY'},
+    {sym:'BINANCE:BTCUSDT',label:'Bitcoin'}
+  ],
+  watchlist:[
+    {id:'indices',label:'Indices',symbols:[
+      {name:'S&P 500',yf:'^GSPC'},{name:'Nasdaq 100',yf:'^NDX'},
+      {name:'Dow Jones',yf:'^DJI'},{name:'FTSE 100',yf:'^FTSE'},
+      {name:'DAX',yf:'^GDAXI'},{name:'Nikkei 225',yf:'^N225'},
+      {name:'Hang Seng',yf:'^HSI'},{name:'Tadawul',yf:'^TASI.SR'}
+    ]},
+    {id:'commodities',label:'Commodities',symbols:[
+      {name:'Gold',yf:'GC=F'},{name:'Silver',yf:'SI=F'},
+      {name:'WTI Crude',yf:'CL=F'},{name:'Brent Crude',yf:'BZ=F'},
+      {name:'Natural Gas',yf:'NG=F'},{name:'Copper',yf:'HG=F'},
+      {name:'Wheat',yf:'ZW=F'},{name:'Palladium',yf:'PA=F'}
+    ]},
+    {id:'fx',label:'FX / Rates',symbols:[
+      {name:'EUR/USD',yf:'EURUSD=X'},{name:'GBP/USD',yf:'GBPUSD=X'},
+      {name:'USD/JPY',yf:'JPY=X'},{name:'USD/CHF',yf:'CHF=X'},
+      {name:'USD/SAR',yf:'SAR=X'},{name:'DXY',yf:'DX-Y.NYB'},
+      {name:'US 10Y',yf:'^TNX'},{name:'US 2Y',yf:'^IRX'},
+      {name:'US 30Y',yf:'^TYX'},{name:'Bund 10Y',yf:'^GDBR10'}
+    ]},
+    {id:'gcc',label:'GCC / MENA',symbols:[
+      {name:'Tadawul',yf:'^TASI.SR'},{name:'Dubai DFM',yf:'^DFMGI'},
+      {name:'Abu Dhabi',yf:'^ADI'},{name:'Qatar QSI',yf:'^QSI'},
+      {name:'Aramco',yf:'2222.SR'},{name:'USD/SAR',yf:'SAR=X'},
+      {name:'Brent Crude',yf:'BZ=F'},{name:'Gold',yf:'GC=F'}
+    ]},
+    {id:'equities',label:'Equities',symbols:[
+      {name:'Apple',yf:'AAPL'},{name:'Microsoft',yf:'MSFT'},
+      {name:'Nvidia',yf:'NVDA'},{name:'Alphabet',yf:'GOOGL'},
+      {name:'Meta',yf:'META'},{name:'Amazon',yf:'AMZN'},
+      {name:'Tesla',yf:'TSLA'},{name:'Aramco',yf:'2222.SR'}
+    ]},
+    {id:'fi',label:'Fixed Income',symbols:[
+      {name:'US 10Y',yf:'^TNX'},{name:'US 2Y',yf:'^IRX'},
+      {name:'US 30Y',yf:'^TYX'},{name:'T-Bond Fut',yf:'ZB=F'},
+      {name:'10Y Fut',yf:'ZN=F'},{name:'Gold',yf:'GC=F'},
+      {name:'DXY',yf:'DX-Y.NYB'}
+    ]}
+  ],
+  feeds:[
+    {key:'reuters',name:'REUTERS',url:'https://feeds.reuters.com/reuters/businessNews',on:true},
+    {key:'wsj',name:'WSJ',url:'https://feeds.a.dj.com/rss/RSSMarketsMain.xml',on:true},
+    {key:'cnbc',name:'CNBC',url:'https://www.cnbc.com/id/100003114/device/rss/rss.html',on:true},
+    {key:'mw',name:'MKTWATCH',url:'https://feeds.marketwatch.com/marketwatch/topstories/',on:true},
+    {key:'arabnews',name:'ARABNEWS',url:'https://www.arabnews.com/taxonomy/term/317/feed',on:true}
+  ],
+  streams:[
+    {key:'bbg',name:'BBG',cid:'UCIALMKvObZNtJ6AmdCLP7Lg',link:'https://www.youtube.com/@BloombergTelevision/live',on:true},
+    {key:'cnbc2',name:'CNBC',cid:'UCvJJ_dzjViJCoLlRin-0A',link:'https://www.youtube.com/@CNBC/live',on:true},
+    {key:'aj',name:'AJE',cid:'UCNye-wNBqNL5ZzHSJdse7mA',link:'https://www.youtube.com/@AlJazeeraEnglish/live',on:true},
+    {key:'wion',name:'WION',cid:'UCovtFObhY9NypXcpEzj9osQ',link:'https://www.youtube.com/@WIONews/live',on:true}
+  ],
+  appearance:{
+    accent:'gold',newsSize:'md',density:'normal',showDesc:false,
+    wlColumns:{price:true,chg:true,pct:true,spark:true,range:false,volume:false,wk52:false}
+  },
+  behavior:{newsRefresh:300,wlRefresh:30,autoStream:true,showFng:true},
+  layout:{showNews:true,showBroadcast:true,showWatch:true,maxStreams:4,secondaryTz:'',secondaryTzLabel:''}
+};
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function loadState(){
+  try{
+    const raw=localStorage.getItem('wam_v7')||localStorage.getItem('wam_v6')||localStorage.getItem('wam_v5');
+    if(raw){
+      const p=JSON.parse(raw);
+      p.appearance=Object.assign({},DEFAULTS.appearance,p.appearance||{});
+      p.appearance.wlColumns=Object.assign({},DEFAULTS.appearance.wlColumns,p.appearance.wlColumns||{});
+      p.behavior=Object.assign({},DEFAULTS.behavior,p.behavior||{});
+      p.layout=Object.assign({},DEFAULTS.layout,p.layout||{});
+      return p;
+    }
+  }catch(e){}
+  return clone(DEFAULTS);
+}
+function saveState(){localStorage.setItem('wam_v7',JSON.stringify(S));}
+let S=loadState(),wip={},wipWlTab=0;
+
+// ══════════════════════════════════════════════
+// UTILITY
+// ══════════════════════════════════════════════
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function mkTimeout(ms){const c=new AbortController();setTimeout(()=>c.abort(),ms);return c.signal;}
+const CORS_PROXIES=[
+  s=>'https://api.allorigins.win/raw?url='+encodeURIComponent(s),
+  s=>'https://corsproxy.io/?url='+encodeURIComponent(s),
+  s=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(s),
+];
+
+// ── Proxy racing ──────────────────────────────
+// Tracks which proxy index won most recently so it
+// gets a 200 ms head start on the next call.
+let _bestProxy=-1;
+
+async function proxyRace(url,ms=5000){
+  // Fast path: try the known-good proxy first with a shorter fuse
+  if(_bestProxy>=0){
+    try{
+      const r=await fetch(CORS_PROXIES[_bestProxy](url),{signal:mkTimeout(Math.min(ms,3000))});
+      if(r.ok)return r;
+    }catch(e){}
+  }
+  // Fall back: race all remaining proxies simultaneously, take first success
+  try{
+    return await Promise.any(
+      CORS_PROXIES.map(async(fn,i)=>{
+        if(i===_bestProxy)throw new Error('skip');
+        const r=await fetch(fn(url),{signal:mkTimeout(ms)});
+        if(!r.ok)throw new Error('not ok');
+        _bestProxy=i;
+        return r;
+      })
+    );
+  }catch(e){return null;}
+}
+
+// Unwrap allorigins {contents:...} wrapper then JSON-parse
+async function proxyJson(r){
+  const text=await r.text();
+  try{const w=JSON.parse(text);return w.contents?JSON.parse(w.contents):w;}catch(e){return null;}
+}
+
+// ══════════════════════════════════════════════
+// COLUMN RESIZE
+// ══════════════════════════════════════════════
+const colWidths={cw0:270,cw2:355};
+(function(){try{const c=localStorage.getItem('wam_cols');if(c)Object.assign(colWidths,JSON.parse(c));}catch(e){}})();
+function applyColWidths(){
+  document.documentElement.style.setProperty('--cw0',colWidths.cw0+'px');
+  document.documentElement.style.setProperty('--cw2',colWidths.cw2+'px');
+}
+applyColWidths();
+function saveColWidths(){try{localStorage.setItem('wam_cols',JSON.stringify(colWidths));}catch(e){}}
+
+['rh1','rh2'].forEach(id=>{
+  const el=document.getElementById(id);
+  const side=id==='rh1'?'left':'right';
+  el.addEventListener('mousedown',e=>{
+    e.preventDefault();
+    const startX=e.clientX;
+    const startW=side==='left'?colWidths.cw0:colWidths.cw2;
+    el.classList.add('dragging');
+    document.body.style.cursor='col-resize';
+    document.body.style.userSelect='none';
+    function onMove(e){
+      const dx=e.clientX-startX;
+      const mainW=document.getElementById('mainArea').getBoundingClientRect().width;
+      if(side==='left'){
+        colWidths.cw0=Math.max(160,Math.min(mainW-colWidths.cw2-220-10,startW+dx));
+      }else{
+        colWidths.cw2=Math.max(160,Math.min(mainW-colWidths.cw0-220-10,startW-dx));
+      }
+      applyColWidths();
+    }
+    function onUp(){
+      el.classList.remove('dragging');
+      document.body.style.cursor='';
+      document.body.style.userSelect='';
+      document.removeEventListener('mousemove',onMove);
+      document.removeEventListener('mouseup',onUp);
+      saveColWidths();
+    }
+    document.addEventListener('mousemove',onMove);
+    document.addEventListener('mouseup',onUp);
+  });
+});
+
+// ══════════════════════════════════════════════
+// PANEL TOGGLE
+// ══════════════════════════════════════════════
+function applyPanelLayout(){
+  const l=S.layout||{};
+  const n=l.showNews!==false,b=l.showBroadcast!==false,w=l.showWatch!==false;
+  document.getElementById('colNews').style.display=n?'':'none';
+  document.getElementById('colBroadcast').style.display=b?'':'none';
+  document.getElementById('colWatch').style.display=w?'':'none';
+  document.getElementById('rh1').style.display=(n&&b)?'':'none';
+  document.getElementById('rh2').style.display=(b&&w)?'':'none';
+  ['ppNews','ppBroadcast','ppWatch'].forEach((id,i)=>{
+    const val=[n,b,w][i];
+    document.getElementById(id)?.classList.toggle('on',val);
+  });
+  const ids=['cfgShowNews','cfgShowBroadcast','cfgShowWatch'];
+  ids.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el)el.classList.toggle('on',[n,b,w][i]);
+  });
+}
+
+function togglePanel(which,force){
+  if(!S.layout)S.layout=clone(DEFAULTS.layout);
+  const keyMap={news:'showNews',broadcast:'showBroadcast',watch:'showWatch'};
+  const key=keyMap[which];
+  const cur=S.layout[key]!==false;
+  const newVal=force!==undefined?force:!cur;
+  if(!newVal){
+    const l=S.layout;
+    const nOthers={
+      news:(l.showBroadcast!==false)||(l.showWatch!==false),
+      broadcast:(l.showNews!==false)||(l.showWatch!==false),
+      watch:(l.showNews!==false)||(l.showBroadcast!==false)
+    };
+    if(!nOthers[which])return;
+  }
+  S.layout[key]=newVal;
+  applyPanelLayout();
+  saveState();
+}
+
+document.getElementById('ppNews').addEventListener('click',()=>togglePanel('news'));
+document.getElementById('ppBroadcast').addEventListener('click',()=>togglePanel('broadcast'));
+document.getElementById('ppWatch').addEventListener('click',()=>togglePanel('watch'));
+
+// ══════════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════════
+function applyTheme(){
+  const t=THEMES[S.appearance?.accent||'gold']||THEMES.gold;
+  const r=document.documentElement.style;
+  r.setProperty('--accent',t.accent);r.setProperty('--accent2',t.accent2);
+  const fsMap={sm:'11px',md:'12.5px',lg:'14px'};
+  r.setProperty('--news-fs',fsMap[S.appearance?.newsSize||'md']||'12.5px');
+  const padMap={compact:'5px 8px',normal:'8px 10px'};
+  r.setProperty('--wl-pad',padMap[S.appearance?.density||'normal']||'8px 10px');
+}
+applyTheme();
+
+// Notice
+if(location.protocol==='file:')document.getElementById('notice').classList.add('show');
+document.getElementById('noticeX').addEventListener('click',()=>document.getElementById('notice').classList.remove('show'));
+
+// ══════════════════════════════════════════════
+// MARKET SESSIONS
+// ══════════════════════════════════════════════
+const SESSION_DEFS=[
+  {id:'sTyo',tz:'Asia/Tokyo',    open:9*60,    close:15*60+30,days:[1,2,3,4,5]},
+  {id:'sLon',tz:'Europe/London', open:8*60,    close:16*60+30,days:[1,2,3,4,5]},
+  {id:'sNyc',tz:'America/New_York',open:9*60+30,close:16*60,  days:[1,2,3,4,5]},
+  {id:'sGcc',tz:'Asia/Riyadh',   open:10*60,   close:15*60,   days:[0,1,2,3,4]},
+];
+const WD={'Sun':0,'Mon':1,'Tue':2,'Wed':3,'Thu':4,'Fri':5,'Sat':6};
+
+function isSessionOpen(def){
+  try{
+    const ps=new Intl.DateTimeFormat('en-US',{timeZone:def.tz,hour:'2-digit',minute:'2-digit',weekday:'short',hour12:false}).formatToParts(new Date());
+    const p={};ps.forEach(x=>p[x.type]=x.value);
+    const hm=parseInt(p.hour)*60+parseInt(p.minute);
+    const wd=WD[p.weekday]??-1;
+    return def.days.includes(wd)&&hm>=def.open&&hm<def.close;
+  }catch(e){return false;}
+}
+
+function updateSessions(){
+  SESSION_DEFS.forEach(d=>{
+    const el=document.getElementById(d.id);if(!el)return;
+    const open=isSessionOpen(d);
+    el.classList.toggle('open',open);
+  });
+}
+
+// ══════════════════════════════════════════════
+// CLOCK + SECONDARY TZ
+// ══════════════════════════════════════════════
+function tick(){
+  const n=new Date();
+  document.getElementById('clk').textContent=n.toLocaleTimeString('en-GB',{hour12:false,timeZone:'Asia/Dubai'});
+  document.getElementById('clkd').textContent=n.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Dubai'}).toUpperCase();
+  const tz2=S.layout?.secondaryTz||'';
+  const lbl2=S.layout?.secondaryTzLabel||'';
+  const clk2=document.getElementById('clk2');
+  if(tz2&&clk2){
+    clk2.style.display='';
+    document.getElementById('clk2t').textContent=n.toLocaleTimeString('en-GB',{hour12:false,timeZone:tz2,hour:'2-digit',minute:'2-digit'});
+    document.getElementById('clk2l').textContent=lbl2||tz2.split('/')[1]||tz2;
+  }else if(clk2){
+    clk2.style.display='none';
+  }
+}
+tick();
+setInterval(tick,1000);
+setInterval(updateSessions,60000);
+updateSessions();
+
+// ══════════════════════════════════════════════
+// TRADINGVIEW TICKER
+// ══════════════════════════════════════════════
+function buildTicker(tickers){
+  const c=document.getElementById('tickerCont');
+  c.innerHTML='<div class="tradingview-widget-container__widget"></div>';
+  const sc=document.createElement('script');
+  sc.type='text/javascript';
+  sc.src='https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
+  sc.async=true;
+  sc.innerHTML=JSON.stringify({
+    symbols:tickers.map(t=>({proName:t.sym,title:t.label||t.sym})),
+    showSymbolLogo:false,colorTheme:'dark',isTransparent:true,displayMode:'adaptive',locale:'en'
+  });
+  c.appendChild(sc);
+}
+
+// ══════════════════════════════════════════════
+// YAHOO FINANCE DATA LAYER
+// ══════════════════════════════════════════════
+async function fetchQuoteSingle(sym){
+  const mkUrl=h=>'https://'+h+'.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=5d&includePrePost=false';
+  for(const host of['query1','query2']){
+    try{
+      const r=await proxyRace(mkUrl(host),5000);
+      if(!r)continue;
+      const j=await proxyJson(r);if(!j)continue;
+      const result=j?.chart?.result?.[0];if(!result)continue;
+      const meta=result.meta;if(meta?.regularMarketPrice==null)continue;
+      const prev=meta.chartPreviousClose??meta.previousClose??meta.regularMarketPrice;
+      const chg=meta.regularMarketPrice-prev;
+      const closes=result.indicators?.quote?.[0]?.close||[];
+      return{
+        symbol:sym,
+        regularMarketPrice:meta.regularMarketPrice,
+        regularMarketChange:chg,
+        regularMarketChangePercent:prev?chg/prev*100:0,
+        regularMarketDayHigh:meta.regularMarketDayHigh??null,
+        regularMarketDayLow:meta.regularMarketDayLow??null,
+        regularMarketVolume:meta.regularMarketVolume??null,
+        fiftyTwoWeekHigh:meta.fiftyTwoWeekHigh??null,
+        fiftyTwoWeekLow:meta.fiftyTwoWeekLow??null,
+        marketState:(meta.marketState||'UNKNOWN').toUpperCase(),
+        _closes:closes
+      };
+    }catch(e){continue;}
+  }
+  return null;
+}
+
+async function fetchQuotes(syms){
+  if(!syms.length)return[];
+  // All symbols dispatched in parallel — proxyRace handles concurrency
+  // per request; no artificial batching needed.
+  const res=await Promise.allSettled(syms.map(fetchQuoteSingle));
+  return res.filter(r=>r.status==='fulfilled'&&r.value).map(r=>r.value);
+}
+
+// ══════════════════════════════════════════════
+// FORMATTERS
+// ══════════════════════════════════════════════
+function fmtPrice(p){
+  if(p==null||isNaN(p))return'--';
+  const a=Math.abs(p);
+  if(a===0)return'0.00';
+  if(a>=1000)return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(a>=100)return p.toFixed(2);
+  if(a>=10)return p.toFixed(2);
+  if(a>=1)return p.toFixed(4);
+  return p.toFixed(5);
+}
+function fmtChg(c){
+  if(c==null||isNaN(c))return'--';
+  const s=c>=0?'+':'';const a=Math.abs(c);
+  if(a>=1000)return s+c.toLocaleString('en-US',{minimumFractionDigits:1,maximumFractionDigits:1});
+  if(a>=1)return s+c.toFixed(2);return s+c.toFixed(4);
+}
+function fmtPct(p){if(p==null||isNaN(p))return'--';return(p>=0?'+':'')+p.toFixed(2)+'%';}
+function fmtVol(v){
+  if(!v||isNaN(v))return'--';
+  if(v>=1e9)return(v/1e9).toFixed(1)+'B';
+  if(v>=1e6)return(v/1e6).toFixed(1)+'M';
+  if(v>=1e3)return(v/1e3).toFixed(0)+'K';
+  return String(Math.round(v));
+}
+
+function sparkSvg(closes,isUp){
+  const pts=(closes||[]).filter(p=>p!=null&&!isNaN(p));
+  if(pts.length<2)return'<span style="color:var(--muted2)">—</span>';
+  const mn=Math.min(...pts),mx=Math.max(...pts),rng=mx-mn||1;
+  const W=76,H=24;
+  const path=pts.map((p,i)=>{
+    const x=(i/(pts.length-1))*W;
+    const y=H-2-((p-mn)/rng)*(H-4);
+    return x.toFixed(1)+','+y.toFixed(1);
+  }).join(' ');
+  const col=isUp?'var(--green2)':'var(--red2)';
+  return'<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="display:block;flex-shrink:0"><polyline points="'+path+'" fill="none" stroke="'+col+'" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+}
+
+function rangeCellHtml(price,low,high){
+  if(price==null||low==null||high==null||high===low)return'—';
+  const pct=Math.max(0,Math.min(98,(price-low)/(high-low)*100));
+  return'<div class="wl-range-wrap">'
+    +'<div class="wl-range-bar"><div class="wl-range-fill" style="left:'+pct.toFixed(1)+'%"></div></div>'
+    +'<div class="wl-range-vals">'+fmtPrice(low)+'&nbsp;–&nbsp;'+fmtPrice(high)+'</div>'
+    +'</div>';
+}
+
+function mstateDot(state){
+  const s=(state||'').toLowerCase();
+  const cls=s==='regular'?'regular':s==='pre'?'pre':s==='post'?'post':s==='closed'?'closed':'unknown';
+  return'<span class="wl-mstate '+cls+'"></span>';
+}
+
+function setSbDot(id,state){
+  const el=document.getElementById(id);if(!el)return;
+  el.className='sb-dot';
+  if(state==='warn')el.classList.add('w');
+  else if(state==='err')el.classList.add('e');
+}
+
+// ══════════════════════════════════════════════
+// WATCHLIST
+// ══════════════════════════════════════════════
+let wlTab=0,wlCache={},wlTimer=null,_wlFetching=false;
+
+function buildWlTabs(){
+  const el=document.getElementById('wlTabs');el.innerHTML='';
+  S.watchlist.forEach((t,i)=>{
+    const b=document.createElement('button');
+    b.className='wl-tab'+(i===wlTab?' on':'');
+    b.textContent=t.label;b.dataset.i=i;el.appendChild(b);
+  });
+  const s=S.behavior?.wlRefresh||30;
+  document.getElementById('wlRefLabel').textContent='AUTO-REFRESH '+(s<60?s+'s':Math.floor(s/60)+'m')+' · YF';
+}
+
+document.getElementById('wlTabs').addEventListener('click',e=>{
+  const b=e.target.closest('.wl-tab');if(!b)return;
+  wlTab=parseInt(b.dataset.i);
+  document.querySelectorAll('.wl-tab').forEach(x=>x.classList.toggle('on',parseInt(x.dataset.i)===wlTab));
+  loadWlTab(false);
+});
+document.getElementById('wlRefBtn').addEventListener('click',()=>{
+  const t=S.watchlist[wlTab];if(t){delete wlCache[t.id];loadWlTab(false);}
+});
+
+// Click-to-chart via event delegation
+document.getElementById('wlBody').addEventListener('click',e=>{
+  const tr=e.target.closest('tr[data-chart-tv]');if(!tr)return;
+  openChart(tr.dataset.chartName,tr.dataset.chartTv);
+});
+
+async function loadWlTab(useCache=true){
+  const tab=S.watchlist[wlTab];
+  if(!tab||!tab.symbols.length){
+    document.getElementById('wlBody').innerHTML='<div class="wl-msg">NO SYMBOLS CONFIGURED<br><span style="font-size:9px;color:var(--muted2)">Add via &#9881; CONFIGURE</span></div>';
+    setSbDot('sdPrices','warn');return;
+  }
+  const ttl=(S.behavior?.wlRefresh||15)*1000;
+  const cached=wlCache[tab.id];
+  // Stale-while-revalidate: paint cached data immediately so the UI
+  // never shows a blank panel during a background refresh.
+  if(cached){
+    renderWlTable(tab,cached.q);
+    if(useCache&&Date.now()-cached.ts<ttl)return; // still fresh
+  }
+  if(_wlFetching)return; // deduplicate concurrent calls
+  _wlFetching=true;
+  document.getElementById('wlStat').textContent='UPDATING...';setSbDot('sdPrices','warn');
+  try{
+    const quotes=await fetchQuotes(tab.symbols.map(s=>s.yf));
+    if(!quotes.length){
+      if(!cached){
+        document.getElementById('wlBody').innerHTML='<div class="wl-msg"><span class="wl-err">DATA UNAVAILABLE<br>All proxies failed.</span><br><button class="retry" id="wlRetry">RETRY</button></div>';
+        document.getElementById('wlRetry')?.addEventListener('click',()=>{delete wlCache[tab.id];loadWlTab(false);});
+      }
+      document.getElementById('wlStat').textContent='ERROR';
+      document.getElementById('wlTs').textContent='FAILED · '+new Date().toLocaleTimeString('en-GB',{hour12:false});
+      setSbDot('sdPrices','err');return;
+    }
+    wlCache[tab.id]={q:quotes,ts:Date.now()};
+    renderWlTable(tab,quotes);setSbDot('sdPrices','ok');
+  }finally{
+    _wlFetching=false;
+  }
+}
+
+function renderWlTable(tab,quotes){
+  const qMap={};quotes.forEach(q=>{qMap[q.symbol]=q;});
+  const now=new Date().toLocaleTimeString('en-GB',{hour12:false,timeZone:'Asia/Dubai'});
+  document.getElementById('wlStat').textContent='GST '+now;
+  document.getElementById('wlTs').textContent='UPDATED '+now;
+  const cols=S.appearance?.wlColumns||DEFAULTS.appearance.wlColumns;
+  let th='<th>INSTRUMENT</th>';
+  if(cols.price)th+='<th>LAST</th>';
+  if(cols.chg)th+='<th>CHG</th>';
+  if(cols.pct)th+='<th>CHG%</th>';
+  if(cols.spark)th+='<th style="padding-right:10px">5D</th>';
+  if(cols.range)th+='<th>DAY RANGE</th>';
+  if(cols.volume)th+='<th>VOL</th>';
+  if(cols.wk52)th+='<th>52W H/L</th>';
+  let html='<table class="wl-table"><thead><tr>'+th+'</tr></thead><tbody>';
+  tab.symbols.forEach(sym=>{
+    const q=qMap[sym.yf];
+    const price=q?.regularMarketPrice,chg=q?.regularMarketChange,pct=q?.regularMarketChangePercent;
+    const isUp=(chg||0)>=0;const cls=isUp?'up':'dn';
+    const tvSym=sym.tv||yfToTv(sym.yf);
+    let row='<tr data-chart-name="'+esc(sym.name)+'" data-chart-tv="'+esc(tvSym)+'">';
+    row+='<td><span class="wl-name">'+mstateDot(q?.marketState)+esc(sym.name)+'</span><span class="wl-sym">'+esc(sym.yf)+'</span></td>';
+    if(cols.price)row+='<td class="wl-price">'+fmtPrice(price)+'</td>';
+    if(cols.chg)row+='<td class="'+cls+'">'+fmtChg(chg)+'</td>';
+    if(cols.pct)row+='<td class="'+cls+'">'+fmtPct(pct)+'</td>';
+    if(cols.spark)row+='<td style="padding-right:10px">'+sparkSvg(q?._closes,isUp)+'</td>';
+    if(cols.range)row+='<td class="wl-range-cell">'+rangeCellHtml(price,q?.regularMarketDayLow,q?.regularMarketDayHigh)+'</td>';
+    if(cols.volume)row+='<td class="wl-vol">'+fmtVol(q?.regularMarketVolume)+'</td>';
+    if(cols.wk52)row+='<td class="wl-52w">'+(q?.fiftyTwoWeekHigh!=null?fmtPrice(q.fiftyTwoWeekHigh)+' / '+fmtPrice(q.fiftyTwoWeekLow):'--')+'</td>';
+    row+='</tr>';
+    html+=row;
+  });
+  document.getElementById('wlBody').innerHTML=html+'</tbody></table>';
+}
+
+function startWlRefresh(){
+  if(wlTimer)clearInterval(wlTimer);
+  wlTimer=setInterval(()=>{const t=S.watchlist[wlTab];if(t){delete wlCache[t.id];loadWlTab(false);}},
+    (S.behavior?.wlRefresh||30)*1000);
+}
+
+// ══════════════════════════════════════════════
+// NEWS
+// ══════════════════════════════════════════════
+let newsCache={},currentFilter='all',newsTimer=null,allNewsItems=[];
+const readLinks=new Set(JSON.parse(sessionStorage.getItem('wam_read')||'[]'));
+let newsQuery='',newsSearchTimer=null;
+
+function markRead(link){
+  readLinks.add(link);
+  try{sessionStorage.setItem('wam_read',JSON.stringify([...readLinks].slice(-500)));}catch(e){}
+}
+
+function stripHtml(s){
+  return(s||'').replace(/<[^>]+>/g,' ').replace(/&[a-z#0-9]+;/g,' ').replace(/\s+/g,' ').trim();
+}
+
+function parseRSS(xml,name){
+  try{
+    const doc=new DOMParser().parseFromString(xml,'text/xml');
+    return Array.from(doc.querySelectorAll('item,entry')).slice(0,40).map(el=>{
+      const title=(el.querySelector('title')?.textContent||'').trim().replace(/\s+/g,' ');
+      const lEl=el.querySelector('link');
+      const link=lEl?.getAttribute('href')||lEl?.textContent?.trim()||el.querySelector('guid')?.textContent?.trim()||'#';
+      const ds=el.querySelector('pubDate,published,updated')?.textContent?.trim()||'';
+      const desc=stripHtml(el.querySelector('description,summary')?.textContent||'');
+      return{title,link,date:ds?new Date(ds).toISOString():new Date().toISOString(),src:name,desc};
+    }).filter(i=>i.title.length>5);
+  }catch(e){return[];}
+}
+
+async function fetchFeed(feed){
+  const k=feed.key;
+  const ttl=(S.behavior?.newsRefresh||300)*1000;
+  if(newsCache[k]&&Date.now()-newsCache[k].ts<ttl)return newsCache[k].data;
+  try{
+    const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(feed.url)+'&count=40',{signal:mkTimeout(10000)});
+    if(r.ok){
+      const j=await r.json();
+      if(j.status==='ok'&&j.items?.length){
+        const items=j.items.map(i=>({
+          title:(i.title||'').trim(),link:i.link||'#',
+          date:i.pubDate||new Date().toISOString(),src:feed.name,
+          desc:stripHtml(i.description||i.content||'').substring(0,200)
+        })).filter(i=>i.title.length>5);
+        if(items.length){newsCache[k]={data:items,ts:Date.now()};return items;}
+      }
+    }
+  }catch(e){}
+  for(const proxy of CORS_PROXIES){
+    try{
+      const r=await fetch(proxy(feed.url),{signal:mkTimeout(9000)});
+      if(!r.ok)continue;
+      let text=await r.text();
+      try{const j=JSON.parse(text);if(j.contents)text=j.contents;}catch(e){}
+      const items=parseRSS(text,feed.name);
+      if(items.length){newsCache[k]={data:items,ts:Date.now()};return items;}
+    }catch(e){continue;}
+  }
+  return[];
+}
+
+function ago(d){
+  const m=(Date.now()-new Date(d).getTime())/60000;
+  if(isNaN(m)||m<0)return'';
+  if(m<1)return'now';if(m<60)return Math.floor(m)+'m';
+  if(m<1440)return Math.floor(m/60)+'h';return Math.floor(m/1440)+'d';
+}
+
+function renderNews(items){
+  const el=document.getElementById('newsList');
+  const showDesc=S.appearance?.showDesc;
+  if(!items||!items.length){
+    el.innerHTML='<div class="ni-msg">NO ARTICLES RETRIEVED<br><span style="font-size:9px;color:var(--muted2)">Ensure feeds are enabled.<br>Serve from localhost for reliable fetching.</span></div>';
+    document.getElementById('feedStat').textContent='NO DATA';setSbDot('sdNews','err');return;
+  }
+  el.innerHTML=items.map(it=>{
+    const isRead=readLinks.has(it.link);
+    let h='<a class="ni'+(isRead?' read':'')+'" href="'+esc(it.link)+'" target="_blank" rel="noopener" data-link="'+esc(it.link)+'">'
+      +'<div class="ni-meta"><span class="ni-src">'+esc(it.src)+'</span><span class="ni-dot">·</span><span class="ni-time">'+ago(it.date)+'</span></div>'
+      +'<div class="ni-title">'+esc(it.title.substring(0,190))+'</div>';
+    if(showDesc&&it.desc)h+='<div class="ni-desc">'+esc(it.desc.substring(0,160))+'</div>';
+    return h+'</a>';
+  }).join('');
+  document.getElementById('feedStat').textContent=items.length+' ARTICLES · '+new Date().toLocaleTimeString('en-GB',{hour12:false});
+  setSbDot('sdNews','ok');
+}
+
+document.getElementById('newsList').addEventListener('click',e=>{
+  const a=e.target.closest('.ni');if(!a)return;
+  const link=a.dataset.link||a.href;
+  if(link)markRead(link);
+  a.classList.add('read');
+});
+
+function filterAndRenderNews(q){
+  if(!q){renderNews(allNewsItems);return;}
+  const lq=q.toLowerCase();
+  renderNews(allNewsItems.filter(it=>it.title.toLowerCase().includes(lq)||it.src.toLowerCase().includes(lq)));
+}
+
+function buildFilterBtns(){
+  const active=S.feeds.filter(f=>f.on);
+  const el=document.getElementById('filterBtns');el.innerHTML='';
+  const mk=(lbl,key)=>{const b=document.createElement('button');b.className='pbtn'+(currentFilter===key?' on':'');b.textContent=lbl;b.dataset.f=key;el.appendChild(b);};
+  mk('ALL','all');active.forEach(f=>mk(f.name.substring(0,6),f.key));
+}
+
+document.getElementById('filterBtns').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-f]');if(!b)return;
+  currentFilter=b.dataset.f;
+  document.querySelectorAll('#filterBtns .pbtn').forEach(x=>x.classList.toggle('on',x.dataset.f===currentFilter));
+  await runFilter();
+});
+
+async function runFilter(){
+  const active=S.feeds.filter(f=>f.on);
+  document.getElementById('newsList').innerHTML='<div class="ni-msg">FETCHING...</div>';
+  let items;
+  if(currentFilter==='all'){
+    items=(await Promise.allSettled(active.map(fetchFeed))).filter(r=>r.status==='fulfilled').flatMap(r=>r.value).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  }else{
+    const feed=active.find(f=>f.key===currentFilter);
+    items=feed?(await fetchFeed(feed)).sort((a,b)=>new Date(b.date)-new Date(a.date)):[];
+  }
+  allNewsItems=items;
+  newsQuery?filterAndRenderNews(newsQuery):renderNews(items);
+}
+
+async function loadNews(){
+  currentFilter='all';buildFilterBtns();
+  document.getElementById('newsList').innerHTML='<div class="ni-msg">FETCHING FEEDS...</div>';
+  setSbDot('sdNews','warn');
+  const active=S.feeds.filter(f=>f.on);
+  if(!active.length){allNewsItems=[];renderNews([]);return;}
+  const results=await Promise.allSettled(active.map(fetchFeed));
+  const items=results.filter(r=>r.status==='fulfilled').flatMap(r=>r.value).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  allNewsItems=items;
+  newsQuery?filterAndRenderNews(newsQuery):renderNews(items);
+}
+function startNewsRefresh(){
+  if(newsTimer)clearInterval(newsTimer);
+  newsTimer=setInterval(()=>{newsCache={};runFilter();},(S.behavior?.newsRefresh||300)*1000);
+}
+
+// News search
+document.getElementById('newsSearchToggle').addEventListener('click',()=>{
+  const bar=document.getElementById('newsSearchBar');
+  const inp=document.getElementById('newsSearch');
+  const hidden=bar.style.display==='none';
+  bar.style.display=hidden?'':'none';
+  if(hidden){inp.focus();}else{inp.value='';newsQuery='';filterAndRenderNews('');}
+});
+document.getElementById('newsSearch').addEventListener('input',e=>{
+  newsQuery=e.target.value.trim();
+  clearTimeout(newsSearchTimer);
+  newsSearchTimer=setTimeout(()=>filterAndRenderNews(newsQuery),250);
+});
+
+// ══════════════════════════════════════════════
+// MULTI-STREAM GRID
+// ══════════════════════════════════════════════
+let activeStreamKeys=[];
+const slotGenMap={};
+
+function updateGridLayout(){
+  const grid=document.getElementById('streamGrid');
+  const count=activeStreamKeys.length;
+  grid.dataset.count=count;
+  document.getElementById('streamCount').textContent=count>1?count+' STREAMS':'';
+  setSbDot('sdStream',count>0?'ok':'warn');
+}
+
+function createSlot(stream){
+  const slot=document.createElement('div');slot.className='slot';slot.dataset.key=stream.key;
+  const liveUrl=stream.vid?'https://www.youtube.com/watch?v='+stream.vid:(stream.link||('https://www.youtube.com/channel/'+(stream.cid||'')+'/live'));
+  slot.innerHTML='<div class="slot-label">'+esc(stream.name)+'</div>'
+    +'<iframe src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+    +'<div class="slot-ov"><div class="slot-ov-msg">LOADING...</div><a class="slot-ov-lnk" href="'+esc(liveUrl)+'" target="_blank" rel="noopener">OPEN</a></div>';
+  return slot;
+}
+
+function launchSlot(slot,stream){
+  const key=stream.key;
+  slotGenMap[key]=(slotGenMap[key]||0)+1;const gen=slotGenMap[key];
+  const fr=slot.querySelector('iframe');const ov=slot.querySelector('.slot-ov');const msg=slot.querySelector('.slot-ov-msg');
+  setTimeout(()=>{
+    if(slotGenMap[key]!==gen)return;
+    if(stream.vid)fr.src='https://www.youtube.com/embed/'+stream.vid+'?autoplay=1&rel=0&modestbranding=1';
+    else if(stream.cid)fr.src='https://www.youtube.com/embed/live_stream?channel='+stream.cid+'&autoplay=1&rel=0';
+  },80);
+  setTimeout(()=>{if(slotGenMap[key]!==gen)return;ov.classList.add('hidden');},5000);
+  setTimeout(()=>{if(slotGenMap[key]!==gen||ov.classList.contains('hidden'))return;msg.textContent='EMBED UNAVAILABLE';},10000);
+}
+
+function addToGrid(stream){
+  const grid=document.getElementById('streamGrid');
+  const empty=grid.querySelector('.stream-empty');if(empty)empty.style.display='none';
+  const slot=createSlot(stream);grid.appendChild(slot);
+  launchSlot(slot,stream);activeStreamKeys.push(stream.key);updateGridLayout();
+}
+function removeFromGrid(key){
+  const slot=document.querySelector('.slot[data-key="'+key+'"]');
+  if(slot){const fr=slot.querySelector('iframe');if(fr)fr.src='';slotGenMap[key]=(slotGenMap[key]||0)+1;slot.remove();}
+  activeStreamKeys=activeStreamKeys.filter(k=>k!==key);
+  if(!activeStreamKeys.length){const e=document.querySelector('.stream-empty');if(e)e.style.display='flex';}
+  updateGridLayout();
+}
+
+function buildStreamBtns(){
+  const active=S.streams.filter(s=>s.on);
+  const el=document.getElementById('streamBtns');el.innerHTML='';
+  const grid=document.getElementById('streamGrid');
+  if(!active.length){
+    document.getElementById('streamCount').textContent='';
+    grid.innerHTML='<div class="stream-empty"><div class="sf-icon">&#9654;</div><div>NO CHANNELS CONFIGURED</div></div>';
+    activeStreamKeys=[];updateGridLayout();return;
+  }
+  grid.innerHTML='<div class="stream-empty"><div class="sf-icon">&#9654;</div><div>SELECT A CHANNEL</div></div>';
+  activeStreamKeys=[];
+  active.forEach(s=>{
+    const b=document.createElement('button');b.className='pbtn';b.textContent=s.name;b.dataset.sk=s.key;el.appendChild(b);
+  });
+  if(S.behavior?.autoStream!==false&&active.length>0){
+    addToGrid(active[0]);document.querySelector('[data-sk="'+active[0].key+'"]')?.classList.add('on');
+  }else{updateGridLayout();}
+}
+
+document.getElementById('streamBtns').addEventListener('click',e=>{
+  const b=e.target.closest('[data-sk]');if(!b)return;
+  const key=b.dataset.sk;
+  const stream=S.streams.find(s=>s.key===key&&s.on);if(!stream)return;
+  const maxSlots=S.layout?.maxStreams||4;
+  if(activeStreamKeys.includes(key)){
+    if(activeStreamKeys.length>1){removeFromGrid(key);b.classList.remove('on');}
+  }else{
+    if(activeStreamKeys.length>=maxSlots){
+      const oldKey=activeStreamKeys[0];removeFromGrid(oldKey);
+      document.querySelector('[data-sk="'+oldKey+'"]')?.classList.remove('on');
+    }
+    addToGrid(stream);b.classList.add('on');
+  }
+});
+
+// ══════════════════════════════════════════════
+// CHART MODAL
+// ══════════════════════════════════════════════
+function openChart(name,tvSym){
+  document.getElementById('chartModalTitle').textContent=esc(name)+' · '+esc(tvSym);
+  const body=document.getElementById('chartModalBody');
+  body.innerHTML='';
+  const wrap=document.createElement('div');
+  wrap.className='tradingview-widget-container';wrap.style.height='100%';
+  const inner=document.createElement('div');
+  inner.className='tradingview-widget-container__widget';inner.style.height='100%';
+  wrap.appendChild(inner);
+  const sc=document.createElement('script');
+  sc.type='text/javascript';
+  sc.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+  sc.async=true;
+  sc.innerHTML=JSON.stringify({
+    autosize:true,symbol:tvSym,interval:'D',timezone:'Asia/Dubai',
+    theme:'dark',style:'1',locale:'en',enable_publishing:false,
+    withdateranges:true,range:'6M',hide_side_toolbar:false,
+    allow_symbol_change:true,details:true,hotlist:false,calendar:false,
+    show_popup_button:true,popup_width:'1200',popup_height:'700'
+  });
+  wrap.appendChild(sc);body.appendChild(wrap);
+  document.getElementById('chartModal').classList.add('open');
+}
+function closeChart(){
+  document.getElementById('chartModal').classList.remove('open');
+  setTimeout(()=>{document.getElementById('chartModalBody').innerHTML='';},300);
+}
+document.getElementById('chartModal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('chartModal'))closeChart();
+});
+document.getElementById('chartModalClose').addEventListener('click',closeChart);
+
+// ══════════════════════════════════════════════
+// FEAR & GREED INDEX
+// ══════════════════════════════════════════════
+let fngCache=null,fngTs=0;
+async function fetchFearGreed(){
+  if(fngCache&&Date.now()-fngTs<3600000)return fngCache;
+  const FNG_URL='https://api.alternative.me/fng/?limit=1';
+  async function tryParse(text){
+    let j;try{const w=JSON.parse(text);j=w.contents?JSON.parse(w.contents):w;}catch(e){return null;}
+    const d=j?.data?.[0];if(!d)return null;
+    return{value:parseInt(d.value),label:d.value_classification};
+  }
+  try{
+    const r=await fetch(FNG_URL,{signal:mkTimeout(7000)});
+    if(r.ok){const d=await tryParse(await r.text());if(d){fngCache=d;fngTs=Date.now();return d;}}
+  }catch(e){}
+  for(const proxy of CORS_PROXIES){
+    try{
+      const r=await fetch(proxy(FNG_URL),{signal:mkTimeout(7000)});
+      if(!r.ok)continue;
+      const d=await tryParse(await r.text());
+      if(d){fngCache=d;fngTs=Date.now();return d;}
+    }catch(e){continue;}
+  }
+  return null;
+}
+async function updateFearGreed(){
+  const el=document.getElementById('sbFng');if(!el)return;
+  if(!(S.behavior?.showFng!==false)){el.textContent='';return;}
+  const d=await fetchFearGreed();if(!d){el.textContent='';return;}
+  const col=d.value>=75?'var(--green2)':d.value>=55?'var(--green)':d.value>=45?'var(--sub)':'var(--red2)';
+  el.innerHTML='F&amp;G: <span style="color:'+col+'">'+d.value+' · '+d.label.toUpperCase()+'</span>';
+}
+
+// ══════════════════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════════════════
+let calBuilt=false;
+function toggleCal(force){
+  const d=document.getElementById('calDrawer');const b=document.getElementById('calToggle');
+  const open=force!==undefined?force:!d.classList.contains('open');
+  d.classList.toggle('open',open);b.classList.toggle('on',open);
+  if(open&&!calBuilt){
+    calBuilt=true;
+    const wrap=document.createElement('div');
+    wrap.className='tradingview-widget-container';
+    wrap.style.cssText='height:100%;width:100%';
+    const inner=document.createElement('div');
+    inner.className='tradingview-widget-container__widget';
+    inner.style.cssText='height:100%;width:100%';
+    wrap.appendChild(inner);
+    const sc=document.createElement('script');
+    sc.type='text/javascript';
+    sc.async=true;
+    sc.textContent=JSON.stringify({
+      colorTheme:'dark',
+      isTransparent:false,
+      width:'100%',
+      height:'100%',
+      locale:'en',
+      importanceFilter:'-1,0,1',
+      countryFilter:'us,eu,gb,jp,au,ca,ch,cn,sa,ae,qa,kw,bh,om,in,tr'
+    });
+    sc.src='https://s3.tradingview.com/external-embedding/embed-widget-economic-calendar.js';
+    wrap.appendChild(sc);
+    document.getElementById('calBody').appendChild(wrap);
+  }
+}
+document.getElementById('calToggle').addEventListener('click',()=>toggleCal());
+document.getElementById('calClose').addEventListener('click',()=>toggleCal(false));
+
+// ══════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ══════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+  if(e.ctrlKey||e.metaKey)return;
+  if(e.altKey){
+    if(e.key==='1'){togglePanel('news');e.preventDefault();}
+    else if(e.key==='2'){togglePanel('broadcast');e.preventDefault();}
+    else if(e.key==='3'){togglePanel('watch');e.preventDefault();}
+    return;
+  }
+  const k=e.key;
+  if(k>='1'&&k<='9'){
+    const i=parseInt(k)-1;
+    if(i<S.watchlist.length){wlTab=i;document.querySelectorAll('.wl-tab').forEach((x,xi)=>x.classList.toggle('on',xi===i));loadWlTab(false);}
+  }else if(k==='r'||k==='R'){const t=S.watchlist[wlTab];if(t){delete wlCache[t.id];loadWlTab(false);}}
+  else if(k==='n'||k==='N'){newsCache={};runFilter();}
+  else if(k==='s'||k==='S'){document.getElementById('newsSearchToggle').click();}
+  else if(k==='c'||k==='C'){toggleCal();}
+  else if(k===','||k==='<'){openCfg('symbols');}
+  else if(k==='?'){openCfg('shortcuts');}
+  else if(k==='Escape'){
+    if(document.getElementById('chartModal').classList.contains('open'))closeChart();
+    else if(document.getElementById('sPanel').classList.contains('open'))closeCfg();
+    else toggleCal(false);
+  }
+});
+
+// ══════════════════════════════════════════════
+// SETTINGS — RENDER
+// ══════════════════════════════════════════════
+function renderTickerList(){
+  document.getElementById('tickerList').innerHTML=wip.tickers.map((t,i)=>
+    '<div class="s-row"><div class="s-ri"><div class="s-rl">'+esc(t.label||t.sym)+'</div><div class="s-rs">'+esc(t.sym)+'</div></div><button class="s-del" data-dtk="'+i+'">&#215;</button></div>').join('');
+}
+function renderWlMgr(){
+  document.getElementById('wlMgrTabs').innerHTML=wip.watchlist.map((t,i)=>
+    '<button class="wl-mt'+(i===wipWlTab?' on':'')+'" data-wmt="'+i+'">'+esc(t.label)+'</button>').join('');
+  renderWlSymList();
+}
+function renderWlSymList(){
+  const tab=wip.watchlist[wipWlTab];
+  document.getElementById('wlSymList').innerHTML=(tab?.symbols||[]).map((s,i)=>
+    '<div class="s-row"><div class="s-ri"><div class="s-rl">'+esc(s.name)+'</div><div class="s-rs">'+esc(s.yf)+(s.tv?' · TV: '+esc(s.tv):'')+'</div></div><button class="s-del" data-dws="'+i+'">&#215;</button></div>').join('');
+}
+function renderFeedList(){
+  document.getElementById('feedList').innerHTML=wip.feeds.map((f,i)=>
+    '<div class="s-row"><div class="s-ri"><div class="s-rl">'+esc(f.name)+'</div><div class="s-rs">'+esc(f.url.substring(0,55)+(f.url.length>55?'...':''))+'</div></div>'
+    +'<div class="s-acts"><button class="tog'+(f.on?' on':'')+'" data-tfd="'+i+'"><div class="tog-k"></div></button><button class="s-del" data-dfd="'+i+'">&#215;</button></div></div>').join('');
+}
+function renderStreamList(){
+  document.getElementById('streamList').innerHTML=wip.streams.map((s,i)=>{
+    const sub=s.vid?'VIDEO ID: '+esc(s.vid)+(s.cid?' · CID: '+esc(s.cid):''):(s.cid?'CHANNEL ID: '+esc(s.cid):'NO ID CONFIGURED');
+    return'<div class="s-row"><div class="s-ri"><div class="s-rl">'+esc(s.name)+'</div><div class="s-rs">'+sub+'</div></div>'
+      +'<div class="s-acts"><button class="tog'+(s.on?' on':'')+'" data-tst="'+i+'"><div class="tog-k"></div></button><button class="s-del" data-dst="'+i+'">&#215;</button></div></div>';
+  }).join('');
+}
+function renderAppearance(){
+  const sw=document.getElementById('swatches');sw.innerHTML='';
+  Object.entries(THEMES).forEach(([key,t])=>{
+    const d=document.createElement('div');d.style.cssText='display:flex;flex-direction:column;align-items:center';
+    const btn=document.createElement('button');
+    btn.className='sw'+(wip.appearance.accent===key?' on':'');
+    btn.style.background=t.accent;btn.title=t.label;btn.dataset.th=key;
+    btn.addEventListener('click',()=>{wip.appearance.accent=key;document.querySelectorAll('.sw').forEach(x=>x.classList.toggle('on',x.dataset.th===key));});
+    const lbl=document.createElement('span');lbl.className='sw-lbl';lbl.textContent=t.label;
+    d.appendChild(btn);d.appendChild(lbl);sw.appendChild(d);
+  });
+  document.querySelectorAll('[data-ns]').forEach(x=>x.classList.toggle('on',x.dataset.ns===(wip.appearance.newsSize||'md')));
+  document.querySelectorAll('[data-dens]').forEach(x=>x.classList.toggle('on',x.dataset.dens===(wip.appearance.density||'normal')));
+  const wc=wip.appearance.wlColumns||{};
+  const cids={price:'wlcPrice',chg:'wlcChg',pct:'wlcPct',spark:'wlcSpark',range:'wlcRange',volume:'wlcVol',wk52:'wlcWk52'};
+  Object.entries(cids).forEach(([k,id])=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',!!wc[k]);});
+  const d=document.getElementById('cfgShowDesc');if(d)d.classList.toggle('on',!!wip.appearance.showDesc);
+}
+function renderBehavior(){
+  document.querySelectorAll('[data-nr]').forEach(x=>x.classList.toggle('on',x.dataset.nr===String(wip.behavior?.newsRefresh||300)));
+  document.querySelectorAll('[data-wr]').forEach(x=>x.classList.toggle('on',x.dataset.wr===String(wip.behavior?.wlRefresh||30)));
+  document.querySelectorAll('[data-as]').forEach(x=>x.classList.toggle('on',x.dataset.as===(wip.behavior?.autoStream!==false?'1':'0')));
+  const f=document.getElementById('cfgShowFng');if(f)f.classList.toggle('on',wip.behavior?.showFng!==false);
+}
+function renderLayout(){
+  const l=wip.layout||{};
+  const n=document.getElementById('cfgShowNews');const b=document.getElementById('cfgShowBroadcast');const w=document.getElementById('cfgShowWatch');
+  if(n)n.classList.toggle('on',l.showNews!==false);
+  if(b)b.classList.toggle('on',l.showBroadcast!==false);
+  if(w)w.classList.toggle('on',l.showWatch!==false);
+  document.querySelectorAll('[data-ms]').forEach(x=>x.classList.toggle('on',x.dataset.ms===String(l.maxStreams||4)));
+  const sel=document.getElementById('tzSelect');
+  if(sel){
+    const tzVal=l.secondaryTz&&l.secondaryTzLabel?l.secondaryTz+'|'+l.secondaryTzLabel:'';
+    // find matching option
+    let found=false;
+    Array.from(sel.options).forEach(o=>{if(o.value.startsWith(l.secondaryTz+'|')){sel.value=o.value;found=true;}});
+    if(!found)sel.value='';
+  }
+}
+
+// ══════════════════════════════════════════════
+// SETTINGS — EVENT HANDLERS
+// ══════════════════════════════════════════════
+document.getElementById('sNavs').addEventListener('click',e=>{
+  const b=e.target.closest('[data-pg]');if(!b)return;
+  document.querySelectorAll('.s-nav').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.s-pg').forEach(x=>x.classList.toggle('on',x.id==='pg-'+b.dataset.pg));
+});
+document.getElementById('cfgBtn').addEventListener('click',()=>openCfg('symbols'));
+document.getElementById('sOv').addEventListener('click',closeCfg);
+document.getElementById('sClose').addEventListener('click',closeCfg);
+document.getElementById('sApply').addEventListener('click',applyAndClose);
+document.getElementById('sRst').addEventListener('click',resetDefaults);
+document.getElementById('addTkBtn').addEventListener('click',addTicker);
+document.getElementById('addTabBtn').addEventListener('click',addWlTab);
+document.getElementById('delTabBtn').addEventListener('click',delWlTab);
+document.getElementById('addWlBtn').addEventListener('click',addWlSym);
+document.getElementById('addFdBtn').addEventListener('click',addFeed);
+document.getElementById('addStBtn').addEventListener('click',addStream);
+
+document.getElementById('tickerList').addEventListener('click',e=>{
+  const b=e.target.closest('[data-dtk]');if(b){wip.tickers.splice(+b.dataset.dtk,1);renderTickerList();}
+});
+document.getElementById('feedList').addEventListener('click',e=>{
+  const d=e.target.closest('[data-dfd]');if(d){wip.feeds.splice(+d.dataset.dfd,1);renderFeedList();return;}
+  const t=e.target.closest('.tog[data-tfd]');if(t){const i=+t.dataset.tfd;wip.feeds[i].on=!wip.feeds[i].on;t.classList.toggle('on',wip.feeds[i].on);}
+});
+document.getElementById('streamList').addEventListener('click',e=>{
+  const d=e.target.closest('[data-dst]');if(d){wip.streams.splice(+d.dataset.dst,1);renderStreamList();return;}
+  const t=e.target.closest('.tog[data-tst]');if(t){const i=+t.dataset.tst;wip.streams[i].on=!wip.streams[i].on;t.classList.toggle('on',wip.streams[i].on);}
+});
+document.getElementById('wlMgrTabs').addEventListener('click',e=>{
+  const b=e.target.closest('[data-wmt]');
+  if(b){wipWlTab=+b.dataset.wmt;document.querySelectorAll('[data-wmt]').forEach(x=>x.classList.toggle('on',+x.dataset.wmt===wipWlTab));renderWlSymList();}
+});
+document.getElementById('wlSymList').addEventListener('click',e=>{
+  const d=e.target.closest('[data-dws]');
+  if(d){wip.watchlist[wipWlTab].symbols.splice(+d.dataset.dws,1);renderWlSymList();}
+});
+document.getElementById('newsSizeOpts').addEventListener('click',e=>{
+  const b=e.target.closest('[data-ns]');if(!b)return;
+  wip.appearance.newsSize=b.dataset.ns;
+  document.querySelectorAll('[data-ns]').forEach(x=>x.classList.toggle('on',x.dataset.ns===wip.appearance.newsSize));
+});
+document.getElementById('densityOpts').addEventListener('click',e=>{
+  const b=e.target.closest('[data-dens]');if(!b)return;
+  wip.appearance.density=b.dataset.dens;
+  document.querySelectorAll('[data-dens]').forEach(x=>x.classList.toggle('on',x.dataset.dens===wip.appearance.density));
+});
+document.getElementById('newsRefOpts').addEventListener('click',e=>{
+  const b=e.target.closest('[data-nr]');if(!b)return;
+  wip.behavior.newsRefresh=parseInt(b.dataset.nr);
+  document.querySelectorAll('[data-nr]').forEach(x=>x.classList.toggle('on',x.dataset.nr===b.dataset.nr));
+});
+document.getElementById('wlRefOpts').addEventListener('click',e=>{
+  const b=e.target.closest('[data-wr]');if(!b)return;
+  wip.behavior.wlRefresh=parseInt(b.dataset.wr);
+  document.querySelectorAll('[data-wr]').forEach(x=>x.classList.toggle('on',x.dataset.wr===b.dataset.wr));
+});
+document.getElementById('autoStreamOpts').addEventListener('click',e=>{
+  const b=e.target.closest('[data-as]');if(!b)return;
+  wip.behavior.autoStream=b.dataset.as==='1';
+  document.querySelectorAll('[data-as]').forEach(x=>x.classList.toggle('on',x.dataset.as===b.dataset.as));
+});
+
+// Layout panel visibility toggles (apply immediately)
+['cfgShowNews','cfgShowBroadcast','cfgShowWatch'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(){
+    const which=id==='cfgShowNews'?'news':id==='cfgShowBroadcast'?'broadcast':'watch';
+    togglePanel(which); // applies to S and saves
+    if(!wip.layout)wip.layout=clone(S.layout||DEFAULTS.layout);
+    wip.layout[{news:'showNews',broadcast:'showBroadcast',watch:'showWatch'}[which]]=S.layout[{news:'showNews',broadcast:'showBroadcast',watch:'showWatch'}[which]];
+    this.classList.toggle('on',S.layout[{news:'showNews',broadcast:'showBroadcast',watch:'showWatch'}[which]]!==false);
+  });
+});
+
+// Watchlist column toggles
+const WLC_MAP={wlcPrice:'price',wlcChg:'chg',wlcPct:'pct',wlcSpark:'spark',wlcRange:'range',wlcVol:'volume',wlcWk52:'wk52'};
+Object.keys(WLC_MAP).forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(){
+    if(!wip.appearance.wlColumns)wip.appearance.wlColumns=clone(DEFAULTS.appearance.wlColumns);
+    const key=WLC_MAP[id];
+    wip.appearance.wlColumns[key]=!wip.appearance.wlColumns[key];
+    this.classList.toggle('on',wip.appearance.wlColumns[key]);
+  });
+});
+
+document.getElementById('cfgShowDesc').addEventListener('click',function(){
+  wip.appearance.showDesc=!wip.appearance.showDesc;this.classList.toggle('on',wip.appearance.showDesc);
+});
+document.getElementById('cfgShowFng').addEventListener('click',function(){
+  wip.behavior.showFng=!wip.behavior.showFng;this.classList.toggle('on',wip.behavior.showFng);
+});
+
+// Max stream slots
+document.getElementById('maxSlotsOpts').addEventListener('click',e=>{
+  const b=e.target.closest('[data-ms]');if(!b)return;
+  if(!wip.layout)wip.layout=clone(S.layout||DEFAULTS.layout);
+  wip.layout.maxStreams=parseInt(b.dataset.ms);
+  document.querySelectorAll('[data-ms]').forEach(x=>x.classList.toggle('on',x.dataset.ms===b.dataset.ms));
+});
+
+// Layout presets (apply immediately)
+document.querySelectorAll('[data-preset]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const p=btn.dataset.preset;
+    if(!S.layout)S.layout=clone(DEFAULTS.layout);
+    if(p==='standard'){Object.assign(S.layout,{showNews:true,showBroadcast:true,showWatch:true});colWidths.cw0=270;colWidths.cw2=355;}
+    else if(p==='nobroadcast'){Object.assign(S.layout,{showNews:true,showBroadcast:false,showWatch:true});colWidths.cw0=320;colWidths.cw2=480;}
+    else if(p==='widewatch'){Object.assign(S.layout,{showNews:true,showBroadcast:true,showWatch:true});colWidths.cw0=230;colWidths.cw2=500;}
+    else if(p==='widenews'){Object.assign(S.layout,{showNews:true,showBroadcast:true,showWatch:true});colWidths.cw0=400;colWidths.cw2=280;}
+    else if(p==='focus'){Object.assign(S.layout,{showNews:true,showBroadcast:false,showWatch:false});colWidths.cw0=999;}
+    if(!wip.layout)wip.layout={};Object.assign(wip.layout,S.layout);
+    applyColWidths();saveColWidths();applyPanelLayout();saveState();renderLayout();
+  });
+});
+
+// Secondary timezone
+document.getElementById('tzSelect').addEventListener('change',function(){
+  if(!wip.layout)wip.layout=clone(S.layout||DEFAULTS.layout);
+  const val=this.value;
+  if(!val){wip.layout.secondaryTz='';wip.layout.secondaryTzLabel='';}
+  else{const[tz,...rest]=val.split('|');wip.layout.secondaryTz=tz;wip.layout.secondaryTzLabel=rest.join('|')||'';}
+});
+
+// Backup: Export
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='wam_config_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();URL.revokeObjectURL(a.href);
+});
+
+// Backup: Import
+document.getElementById('importBtn').addEventListener('click',()=>document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change',function(){
+  const file=this.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const st=document.getElementById('importStatus');
+    try{
+      const imp=JSON.parse(e.target.result);
+      if(!imp.watchlist||!imp.feeds)throw new Error('Invalid configuration structure');
+      imp.appearance=Object.assign({},DEFAULTS.appearance,imp.appearance||{});
+      imp.appearance.wlColumns=Object.assign({},DEFAULTS.appearance.wlColumns,imp.appearance.wlColumns||{});
+      imp.behavior=Object.assign({},DEFAULTS.behavior,imp.behavior||{});
+      imp.layout=Object.assign({},DEFAULTS.layout,imp.layout||{});
+      S=imp;saveState();
+      st.style.color='var(--green2)';st.textContent='CONFIGURATION IMPORTED. APPLYING...';
+      setTimeout(()=>{applyAll();closeCfg();},700);
+    }catch(err){
+      st.style.color='var(--red2)';st.textContent='IMPORT FAILED: '+err.message;
+    }
+  };
+  reader.readAsText(file);this.value='';
+});
+
+// Backup: Clear
+document.getElementById('clearDataBtn').addEventListener('click',()=>{
+  if(!confirm('Clear all WAM data from localStorage?'))return;
+  ['wam_v7','wam_v6','wam_v5','wam_cols'].forEach(k=>localStorage.removeItem(k));
+  location.reload();
+});
+
+// ══════════════════════════════════════════════
+// SETTINGS — ADD / DELETE HELPERS
+// ══════════════════════════════════════════════
+function addTicker(){
+  const sym=document.getElementById('tSym').value.trim().toUpperCase().replace(/\s/g,'');
+  const label=document.getElementById('tLbl').value.trim();
+  if(!sym){alert('Enter a TradingView symbol');return;}
+  if(wip.tickers.some(t=>t.sym===sym)){alert('Symbol already in list');return;}
+  wip.tickers.push({sym,label:label||sym});
+  document.getElementById('tSym').value='';document.getElementById('tLbl').value='';renderTickerList();
+}
+function addWlTab(){
+  const name=document.getElementById('newTab').value.trim();
+  if(!name){alert('Enter a tab name');return;}
+  wip.watchlist.push({id:'tab_'+Date.now(),label:name.toUpperCase(),symbols:[]});
+  wipWlTab=wip.watchlist.length-1;document.getElementById('newTab').value='';renderWlMgr();
+}
+function delWlTab(){
+  if(wip.watchlist.length<=1){alert('Cannot delete the last tab');return;}
+  if(!confirm('Delete tab "'+wip.watchlist[wipWlTab].label+'"?'))return;
+  wip.watchlist.splice(wipWlTab,1);wipWlTab=Math.max(0,wipWlTab-1);renderWlMgr();
+}
+function addWlSym(){
+  const yf=document.getElementById('wYf').value.trim();
+  const name=document.getElementById('wName').value.trim();
+  const tv=document.getElementById('wTv').value.trim();
+  if(!yf||!name){alert('Enter both a Yahoo Finance symbol and a display name');return;}
+  if(!wip.watchlist[wipWlTab]){alert('No tab selected');return;}
+  const entry={name,yf};if(tv)entry.tv=tv;
+  wip.watchlist[wipWlTab].symbols.push(entry);
+  document.getElementById('wYf').value='';document.getElementById('wName').value='';document.getElementById('wTv').value='';
+  renderWlSymList();
+}
+function addFeed(){
+  const name=document.getElementById('fName').value.trim().toUpperCase();
+  const url=document.getElementById('fUrl').value.trim();
+  if(!name||!url){alert('Enter both a name and a URL');return;}
+  if(!/^https?:\/\//.test(url)){alert('URL must start with https://');return;}
+  wip.feeds.push({key:'c_'+Date.now(),name,url,on:true});
+  document.getElementById('fName').value='';document.getElementById('fUrl').value='';renderFeedList();
+}
+function parseVideoId(input){
+  const s=(input||'').trim();if(!s)return null;
+  if(/^[a-zA-Z0-9_-]{11}$/.test(s))return s;
+  const patterns=[
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
+    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+    /src="[^"]*\/embed\/([a-zA-Z0-9_-]{11})/,
+    /src='[^']*\/embed\/([a-zA-Z0-9_-]{11})/,
+  ];
+  for(const p of patterns){const m=s.match(p);if(m&&m[1])return m[1];}
+  return null;
+}
+function addStream(){
+  const name=document.getElementById('sName').value.trim().toUpperCase();
+  const embedRaw=document.getElementById('sEmbed').value.trim();
+  const cid=document.getElementById('sCid').value.trim();
+  if(!name){alert('Enter a channel name');return;}
+  if(!embedRaw&&!cid){alert('Enter an embed code, video ID, or channel ID');return;}
+  const vid=parseVideoId(embedRaw);
+  if(embedRaw&&!vid&&!cid){alert('Could not extract a YouTube video ID. Paste the full embed code, a youtube.com/embed/... URL, or the 11-character video ID.');return;}
+  wip.streams.push({key:'c_'+Date.now(),name,vid:vid||null,cid:cid||'',on:true});
+  document.getElementById('sName').value='';document.getElementById('sEmbed').value='';document.getElementById('sCid').value='';
+  renderStreamList();
+}
+
+// ══════════════════════════════════════════════
+// SETTINGS — OPEN / CLOSE / APPLY
+// ══════════════════════════════════════════════
+function openCfg(page='symbols'){
+  wip=clone(S);
+  wip.appearance=Object.assign({},S.appearance||DEFAULTS.appearance);
+  wip.appearance.wlColumns=Object.assign({},S.appearance?.wlColumns||DEFAULTS.appearance.wlColumns);
+  wip.behavior=Object.assign({},S.behavior||DEFAULTS.behavior);
+  wip.layout=Object.assign({},S.layout||DEFAULTS.layout);
+  wipWlTab=0;
+  renderTickerList();renderWlMgr();renderFeedList();renderStreamList();
+  renderAppearance();renderBehavior();renderLayout();
+  const nav=document.querySelector('[data-pg="'+page+'"]');
+  if(nav){
+    document.querySelectorAll('.s-nav').forEach(x=>x.classList.toggle('on',x===nav));
+    document.querySelectorAll('.s-pg').forEach(x=>x.classList.toggle('on',x.id==='pg-'+page));
+  }
+  document.getElementById('sPanel').classList.add('open');
+  document.getElementById('sOv').classList.add('open');
+  document.getElementById('cfgBtn').classList.add('on');
+}
+function closeCfg(){
+  document.getElementById('sPanel').classList.remove('open');
+  document.getElementById('sOv').classList.remove('open');
+  document.getElementById('cfgBtn').classList.remove('on');
+}
+function applyAll(){
+  applyTheme();
+  buildTicker(S.tickers);buildWlTabs();wlCache={};loadWlTab(false);startWlRefresh();
+  newsCache={};currentFilter='all';loadNews();startNewsRefresh();
+  buildStreamBtns();applyPanelLayout();tick();
+  document.getElementById('sbFng').textContent='';
+  if(S.behavior?.showFng!==false)updateFearGreed();
+}
+function applyAndClose(){
+  S=clone(wip);S.appearance=clone(wip.appearance);S.behavior=clone(wip.behavior);S.layout=clone(wip.layout);
+  saveState();applyAll();closeCfg();
+}
+function resetDefaults(){
+  if(!confirm('Reset all settings to factory defaults?'))return;
+  S=clone(DEFAULTS);saveState();applyAll();closeCfg();
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+applyPanelLayout();
+buildTicker(S.tickers);
+buildWlTabs();loadWlTab(false);startWlRefresh();
+loadNews();startNewsRefresh();
+buildStreamBtns();
+if(S.behavior?.showFng!==false)updateFearGreed();
+</script>
+</body>
+</html>
