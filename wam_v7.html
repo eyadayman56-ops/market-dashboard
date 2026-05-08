@@ -231,6 +231,11 @@ body{display:flex;flex-direction:column;height:100vh;font-family:'Poppins',sans-
 .s-del:hover{border-color:var(--red);color:var(--red)}
 .s-edit{background:transparent;border:1px solid transparent;color:var(--muted2);cursor:pointer;font-size:13px;line-height:1;padding:2px 5px;transition:all .15s;flex-shrink:0}
 .s-edit:hover{border-color:var(--accent);color:var(--accent)}
+.s-drag{cursor:grab;color:var(--muted2);padding:0 6px 0 2px;font-size:15px;flex-shrink:0;line-height:1;user-select:none;opacity:.45;transition:opacity .15s;letter-spacing:-2px}
+.s-drag:hover{opacity:1;color:var(--muted)}
+.s-drag:active{cursor:grabbing}
+.s-row.drag-over{border-color:rgba(232,168,48,0.45)!important;background:rgba(232,168,48,0.07)!important;box-shadow:0 0 0 1px rgba(232,168,48,0.18)}
+.s-row.dragging{opacity:0.3;border-style:dashed}
 .s-add{display:flex;gap:5px;margin-top:9px;align-items:stretch;flex-wrap:wrap}
 .s-inp{background:var(--panel);border:1px solid var(--border2);color:var(--text);padding:7px 10px;font-family:'Poppins',sans-serif;font-size:10px;outline:none;transition:border .15s;min-width:0}
 .s-inp:focus{border-color:var(--accent)}
@@ -1958,7 +1963,7 @@ document.addEventListener('keydown',e=>{
 // ══════════════════════════════════════════════
 function renderTickerList(){
   document.getElementById('tickerList').innerHTML=wip.tickers.map((t,i)=>
-    '<div class="s-row"><div class="s-ri"><div class="s-rl">'+esc(t.label||t.sym)+'</div><div class="s-rs">'+esc(t.sym)+'</div></div><div class="s-acts"><button class="s-edit" data-etk="'+i+'" title="Edit">&#9998;</button><button class="s-del" data-dtk="'+i+'" title="Delete">&#215;</button></div></div>').join('');
+    '<div class="s-row" draggable="true" data-idx="'+i+'"><span class="s-drag" title="Drag to reorder">⋮⋮</span><div class="s-ri"><div class="s-rl">'+esc(t.label||t.sym)+'</div><div class="s-rs">'+esc(t.sym)+'</div></div><div class="s-acts"><button class="s-edit" data-etk="'+i+'" title="Edit">&#9998;</button><button class="s-del" data-dtk="'+i+'" title="Delete">&#215;</button></div></div>').join('');
 }
 function renderWlMgr(){
   document.getElementById('wlMgrTabs').innerHTML=wip.watchlist.map((t,i)=>
@@ -1968,17 +1973,17 @@ function renderWlMgr(){
 function renderWlSymList(){
   const tab=wip.watchlist[wipWlTab];
   document.getElementById('wlSymList').innerHTML=(tab?.symbols||[]).map((s,i)=>
-    '<div class="s-row"><div class="s-ri"><div class="s-rl">'+esc(s.name)+'</div><div class="s-rs">'+esc(s.yf)+(s.tv?' · TV: '+esc(s.tv):'')+'</div></div><div class="s-acts"><button class="s-edit" data-ews="'+i+'" title="Edit">&#9998;</button><button class="s-del" data-dws="'+i+'" title="Delete">&#215;</button></div></div>').join('');
+    '<div class="s-row" draggable="true" data-idx="'+i+'"><span class="s-drag" title="Drag to reorder">⋮⋮</span><div class="s-ri"><div class="s-rl">'+esc(s.name)+'</div><div class="s-rs">'+esc(s.yf)+(s.tv?' · TV: '+esc(s.tv):'')+'</div></div><div class="s-acts"><button class="s-edit" data-ews="'+i+'" title="Edit">&#9998;</button><button class="s-del" data-dws="'+i+'" title="Delete">&#215;</button></div></div>').join('');
 }
 function renderFeedList(){
   document.getElementById('feedList').innerHTML=wip.feeds.map((f,i)=>
-    '<div class="s-row"><div class="s-ri"><div class="s-rl">'+esc(f.name)+'</div><div class="s-rs">'+esc(f.url.substring(0,55)+(f.url.length>55?'...':''))+'</div></div>'
+    '<div class="s-row" draggable="true" data-idx="'+i+'"><span class="s-drag" title="Drag to reorder">⋮⋮</span><div class="s-ri"><div class="s-rl">'+esc(f.name)+'</div><div class="s-rs">'+esc(f.url.substring(0,55)+(f.url.length>55?'...':''))+'</div></div>'
     +'<div class="s-acts"><button class="tog'+(f.on?' on':'')+'" data-tfd="'+i+'"><div class="tog-k"></div></button><button class="s-edit" data-efd="'+i+'" title="Edit">&#9998;</button><button class="s-del" data-dfd="'+i+'" title="Delete">&#215;</button></div></div>').join('');
 }
 function renderStreamList(){
   document.getElementById('streamList').innerHTML=wip.streams.map((s,i)=>{
     const sub=s.vid?'VIDEO ID: '+esc(s.vid)+(s.cid?' · CID: '+esc(s.cid):''):(s.cid?'CHANNEL ID: '+esc(s.cid):'NO ID CONFIGURED');
-    return'<div class="s-row"><div class="s-ri"><div class="s-rl">'+esc(s.name)+'</div><div class="s-rs">'+sub+'</div></div>'
+    return'<div class="s-row" draggable="true" data-idx="'+i+'"><span class="s-drag" title="Drag to reorder">⋮⋮</span><div class="s-ri"><div class="s-rl">'+esc(s.name)+'</div><div class="s-rs">'+sub+'</div></div>'
       +'<div class="s-acts"><button class="tog'+(s.on?' on':'')+'" data-tst="'+i+'"><div class="tog-k"></div></button><button class="s-edit" data-est="'+i+'" title="Edit">&#9998;</button><button class="s-del" data-dst="'+i+'" title="Delete">&#215;</button></div></div>';
   }).join('');
 }
@@ -2022,6 +2027,47 @@ function renderLayout(){
     if(!found)sel.value='';
   }
 }
+
+// ══════════════════════════════════════════════
+// DRAG-AND-DROP REORDER
+// ══════════════════════════════════════════════
+function makeDraggable(containerId,getArr,rerender){
+  const el=document.getElementById(containerId);
+  let dragIdx=null;
+  el.addEventListener('dragstart',e=>{
+    const row=e.target.closest('.s-row[draggable]');if(!row)return;
+    dragIdx=+row.dataset.idx;
+    row.classList.add('dragging');
+    e.dataTransfer.effectAllowed='move';
+  });
+  el.addEventListener('dragend',()=>{
+    el.querySelectorAll('.s-row').forEach(r=>r.classList.remove('dragging','drag-over'));
+    dragIdx=null;
+  });
+  el.addEventListener('dragover',e=>{
+    e.preventDefault();
+    const row=e.target.closest('.s-row[draggable]');if(!row)return;
+    el.querySelectorAll('.s-row').forEach(r=>r.classList.remove('drag-over'));
+    row.classList.add('drag-over');
+    e.dataTransfer.dropEffect='move';
+  });
+  el.addEventListener('dragleave',e=>{
+    const row=e.target.closest('.s-row');if(row)row.classList.remove('drag-over');
+  });
+  el.addEventListener('drop',e=>{
+    e.preventDefault();
+    const row=e.target.closest('.s-row[draggable]');if(!row||dragIdx===null)return;
+    const dropIdx=+row.dataset.idx;if(dragIdx===dropIdx)return;
+    const arr=getArr();
+    const[moved]=arr.splice(dragIdx,1);
+    arr.splice(dropIdx,0,moved);
+    rerender();
+  });
+}
+makeDraggable('tickerList',()=>wip.tickers,renderTickerList);
+makeDraggable('wlSymList',()=>wip.watchlist[wipWlTab].symbols,renderWlSymList);
+makeDraggable('feedList',()=>wip.feeds,renderFeedList);
+makeDraggable('streamList',()=>wip.streams,renderStreamList);
 
 // ══════════════════════════════════════════════
 // SETTINGS — EVENT HANDLERS
