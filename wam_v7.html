@@ -1054,13 +1054,13 @@ function yfToTv(sym){
 // ══════════════════════════════════════════════
 const DEFAULTS={
   tickers:[
-    {sym:'FOREXCOM:SPXUSD',label:'S&P 500'},{sym:'FOREXCOM:NSXUSD',label:'Nasdaq 100'},
-    {sym:'FOREXCOM:DJI',label:'Dow 30'},{sym:'INDEX:UKX',label:'FTSE 100'},
-    {sym:'INDEX:DEU40',label:'DAX'},{sym:'INDEX:NKY',label:'Nikkei'},
-    {sym:'COMEX:GC1!',label:'Gold'},{sym:'NYMEX:BB1!',label:'Brent'},
-    {sym:'NYMEX:CL1!',label:'WTI'},{sym:'NYMEX:NG1!',label:'Nat Gas'},
-    {sym:'TVC:DXY',label:'DXY'},{sym:'TVC:US10Y',label:'US 10Y'},
-    {sym:'TVC:US02Y',label:'US 2Y'},{sym:'FX:EURUSD',label:'EUR/USD'},
+    {sym:'SPX',label:'S&P 500'},{sym:'NSX',label:'Nasdaq 100'},
+    {sym:'DJI',label:'Dow 30'},{sym:'TVC:UKX',label:'FTSE 100'},
+    {sym:'XETR:DAX',label:'DAX'},{sym:'INDEX:NTH',label:'Nikkei'},
+    {sym:'TVC:GOLD',label:'Gold'},{sym:'TVC:SILVER',label:'Silver'}
+    {sym:'TVC:UKOIL',label:'Brent'},{sym:'TVC:USOIL',label:'WTI'},
+    {sym:'TVC:DXY',label:'Dollar Index'},{sym:'TVC:US10Y',label:'US 10Y'},
+    {sym:'TVC:US30Y',label:'US 30Y'},{sym:'FX:EURUSD',label:'EUR/USD'},
     {sym:'FX:GBPUSD',label:'GBP/USD'},{sym:'FX:USDJPY',label:'USD/JPY'},
     {sym:'BINANCE:BTCUSDT',label:'Bitcoin'}
   ],
@@ -1108,13 +1108,15 @@ const DEFAULTS={
     {key:'wsj',name:'WSJ',url:'https://feeds.a.dj.com/rss/RSSMarketsMain.xml',on:true},
     {key:'cnbc',name:'CNBC',url:'https://www.cnbc.com/id/100003114/device/rss/rss.html',on:true},
     {key:'mw',name:'MKTWATCH',url:'https://feeds.marketwatch.com/marketwatch/topstories/',on:true},
-    {key:'arabnews',name:'ARABNEWS',url:'https://www.arabnews.com/taxonomy/term/317/feed',on:true}
+    {key:'arabnews',name:'ARABNEWS',url:'https://www.arabnews.com/taxonomy/term/317/feed',on:true},
+    {key:'yahoo',name:'YAHOO',url:'https://finance.yahoo.com/news/rssindex',on:true},
+    {key:'ft',name:'FT',url:'https://www.ft.com/rss/home/international',on:true}
   ],
-  streams:[
-    {key:'bbg',name:'BBG',cid:'UCIALMKvObZNtJ6AmdCLP7Lg',link:'https://www.youtube.com/@BloombergTelevision/live',on:true},
-    {key:'cnbc2',name:'CNBC',cid:'UCvJJ_dzjViJCoLlRin-0A',link:'https://www.youtube.com/@CNBC/live',on:true},
-    {key:'aj',name:'AJE',cid:'UCNye-wNBqNL5ZzHSJdse7mA',link:'https://www.youtube.com/@AlJazeeraEnglish/live',on:true},
-    {key:'wion',name:'WION',cid:'UCovtFObhY9NypXcpEzj9osQ',link:'https://www.youtube.com/@WIONews/live',on:true}
+   streams:[
+    {key:'bbg',name:'BBG',vid:'iEpJwprxDdk',link:'https://www.youtube.com/@BloombergTelevision/live',on:true},
+    {key:'cnbc2',name:'CNBC',vid:'7DaEce5Uwz0',link:'https://www.youtube.com/@CNBC/live',on:true},
+    {key:'aj',name:'AJE',vid:'bNyUyrR0PHo',link:'https://www.youtube.com/@AlJazeeraEnglish/live',on:true},
+    {key:'yahoo',name:'Yahoo',vid:'KQp-e_XQnDE',link:'https://www.youtube.com/@YahooFinance/live',on:true}
   ],
   appearance:{
     accent:'gold',newsSize:'md',density:'normal',showDesc:false,
