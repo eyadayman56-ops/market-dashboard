@@ -1153,8 +1153,9 @@ let S=loadState(),wip={},wipWlTab=0;
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function mkTimeout(ms){const c=new AbortController();setTimeout(()=>c.abort(),ms);return c.signal;}
 const CORS_PROXIES=[
-  s=>'https://api.allorigins.win/raw?url='+encodeURIComponent(s),
   s=>'https://corsproxy.io/?url='+encodeURIComponent(s),
+  s=>'https://api.allorigins.win/raw?url='+encodeURIComponent(s),
+  s=>'https://thingproxy.freeboard.io/fetch/'+s,
   s=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(s),
 ];
 
@@ -1373,30 +1374,43 @@ function buildTicker(tickers){
 // YAHOO FINANCE DATA LAYER
 // ══════════════════════════════════════════════
 async function fetchQuoteSingle(sym){
+  // Attempt direct fetch first — works when the CDN / browser forwards CORS
+  const directUrls=[
+    'https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=5d&includePrePost=false&corsDomain=finance.yahoo.com',
+    'https://query2.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=5d&includePrePost=false',
+  ];
+  function parseYfResult(j,sym){
+    const result=j?.chart?.result?.[0];if(!result)return null;
+    const meta=result.meta;if(meta?.regularMarketPrice==null)return null;
+    const prev=meta.chartPreviousClose??meta.previousClose??meta.regularMarketPrice;
+    const chg=meta.regularMarketPrice-prev;
+    const closes=result.indicators?.quote?.[0]?.close||[];
+    return{symbol:sym,regularMarketPrice:meta.regularMarketPrice,regularMarketChange:chg,
+      regularMarketChangePercent:prev?chg/prev*100:0,
+      regularMarketDayHigh:meta.regularMarketDayHigh??null,
+      regularMarketDayLow:meta.regularMarketDayLow??null,
+      regularMarketVolume:meta.regularMarketVolume??null,
+      fiftyTwoWeekHigh:meta.fiftyTwoWeekHigh??null,
+      fiftyTwoWeekLow:meta.fiftyTwoWeekLow??null,
+      marketState:(meta.marketState||'UNKNOWN').toUpperCase(),
+      _closes:closes};
+  }
+  for(const url of directUrls){
+    try{
+      const r=await fetch(url,{signal:mkTimeout(4000),credentials:'omit',headers:{'Accept':'application/json'}});
+      if(!r.ok)continue;
+      const j=await r.json();
+      const d=parseYfResult(j,sym);if(d)return d;
+    }catch(e){continue;}
+  }
+  // Proxy fallback
   const mkUrl=h=>'https://'+h+'.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=5d&includePrePost=false';
   for(const host of['query1','query2']){
     try{
-      const r=await proxyRace(mkUrl(host),5000);
+      const r=await proxyRace(mkUrl(host),6000);
       if(!r)continue;
       const j=await proxyJson(r);if(!j)continue;
-      const result=j?.chart?.result?.[0];if(!result)continue;
-      const meta=result.meta;if(meta?.regularMarketPrice==null)continue;
-      const prev=meta.chartPreviousClose??meta.previousClose??meta.regularMarketPrice;
-      const chg=meta.regularMarketPrice-prev;
-      const closes=result.indicators?.quote?.[0]?.close||[];
-      return{
-        symbol:sym,
-        regularMarketPrice:meta.regularMarketPrice,
-        regularMarketChange:chg,
-        regularMarketChangePercent:prev?chg/prev*100:0,
-        regularMarketDayHigh:meta.regularMarketDayHigh??null,
-        regularMarketDayLow:meta.regularMarketDayLow??null,
-        regularMarketVolume:meta.regularMarketVolume??null,
-        fiftyTwoWeekHigh:meta.fiftyTwoWeekHigh??null,
-        fiftyTwoWeekLow:meta.fiftyTwoWeekLow??null,
-        marketState:(meta.marketState||'UNKNOWN').toUpperCase(),
-        _closes:closes
-      };
+      const d=parseYfResult(j,sym);if(d)return d;
     }catch(e){continue;}
   }
   return null;
@@ -1616,8 +1630,9 @@ async function fetchFeed(feed){
   const k=feed.key;
   const ttl=(S.behavior?.newsRefresh||300)*1000;
   if(newsCache[k]&&Date.now()-newsCache[k].ts<ttl)return newsCache[k].data;
+  // Primary: rss2json.com (no key needed for public feeds)
   try{
-    const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(feed.url)+'&count=40',{signal:mkTimeout(10000)});
+    const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(feed.url)+'&count=40',{signal:mkTimeout(12000)});
     if(r.ok){
       const j=await r.json();
       if(j.status==='ok'&&j.items?.length){
@@ -1630,9 +1645,10 @@ async function fetchFeed(feed){
       }
     }
   }catch(e){}
+  // CORS proxy fallback — race all proxies in sequence, take first valid RSS parse
   for(const proxy of CORS_PROXIES){
     try{
-      const r=await fetch(proxy(feed.url),{signal:mkTimeout(9000)});
+      const r=await fetch(proxy(feed.url),{signal:mkTimeout(10000)});
       if(!r.ok)continue;
       let text=await r.text();
       try{const j=JSON.parse(text);if(j.contents)text=j.contents;}catch(e){}
