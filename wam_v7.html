@@ -616,6 +616,21 @@ body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
 .s-inp::placeholder{letter-spacing:.02em}
 .news-search-inp{letter-spacing:.03em}
 .wl-sym{letter-spacing:.03em}
+
+/* ── UPGRADE ADDITIONS ── */
+.wl-table th[data-sort]{cursor:pointer;user-select:none;transition:color .15s}
+.wl-table th[data-sort]:hover{color:var(--accent)}
+.wl-sort-arrow{color:var(--accent);font-size:8px;margin-left:2px}
+.wl-pct-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:500;letter-spacing:.01em;line-height:1.3;white-space:nowrap}
+.wl-pct-badge.up{color:var(--green2);background:rgba(0,240,144,0.1)}
+.wl-pct-badge.dn{color:var(--red2);background:rgba(240,112,112,0.1)}
+.wl-pct-badge.flat{color:var(--muted2);background:rgba(255,255,255,0.04)}
+@keyframes wlFlashUp{0%{background:rgba(0,240,144,0.28)}100%{background:transparent}}
+@keyframes wlFlashDn{0%{background:rgba(240,112,112,0.28)}100%{background:transparent}}
+.wl-flash-up{animation:wlFlashUp .9s ease-out}
+.wl-flash-dn{animation:wlFlashDn .9s ease-out}
+.slot-reload{position:absolute;top:6px;right:8px;z-index:4;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.55);font-size:11px;line-height:1;cursor:pointer;border-radius:3px;padding:3px 7px;transition:all .15s;font-family:'Poppins',sans-serif}
+.slot-reload:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,0,0,.7)}
 </style>
 </head>
 <body>
@@ -627,7 +642,7 @@ body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
 </div>
 
 <div class="hdr">
-  <div class="logo">MARKET INTELLIGENCE</em></div>
+  <div class="logo">MARKET INTELLIGENCE <em>v7</em></div>
   <div class="hdr-sep"></div>
   <div class="hdr-panels">
     <button class="ppbtn on" id="ppNews" title="Toggle News [Alt+1]">NEWS</button>
@@ -909,7 +924,7 @@ body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
         <div class="ctog-row"><button class="tog on" id="wlcPrice"><div class="tog-k"></div></button><span class="ctog-lbl">LAST PRICE</span></div>
         <div class="ctog-row"><button class="tog on" id="wlcChg"><div class="tog-k"></div></button><span class="ctog-lbl">CHANGE</span></div>
         <div class="ctog-row"><button class="tog on" id="wlcPct"><div class="tog-k"></div></button><span class="ctog-lbl">CHANGE %</span></div>
-        <div class="ctog-row"><button class="tog on" id="wlcSpark"><div class="tog-k"></div></button><span class="ctog-lbl">5-DAY SPARKLINE</span></div>
+        <div class="ctog-row"><button class="tog on" id="wlcSpark"><div class="tog-k"></div></button><span class="ctog-lbl">1-MONTH SPARKLINE</span></div>
         <div class="ctog-row"><button class="tog" id="wlcRange"><div class="tog-k"></div></button><span class="ctog-lbl">DAY RANGE BAR</span></div>
         <div class="ctog-row"><button class="tog" id="wlcVol"><div class="tog-k"></div></button><span class="ctog-lbl">VOLUME</span></div>
         <div class="ctog-row"><button class="tog" id="wlcWk52"><div class="tog-k"></div></button><span class="ctog-lbl">52-WEEK HIGH / LOW</span></div>
@@ -927,17 +942,19 @@ body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
       <div class="s-sec">
         <div class="s-sec-hdr">NEWS AUTO-REFRESH</div>
         <div class="opt-row" id="newsRefOpts">
+          <button class="opt" data-nr="60">1 MIN</button>
+          <button class="opt on" data-nr="120">2 MIN</button>
           <button class="opt" data-nr="180">3 MIN</button>
-          <button class="opt on" data-nr="300">5 MIN</button>
+          <button class="opt" data-nr="300">5 MIN</button>
           <button class="opt" data-nr="600">10 MIN</button>
-          <button class="opt" data-nr="900">15 MIN</button>
         </div>
       </div>
       <div class="s-sec">
         <div class="s-sec-hdr">WATCHLIST AUTO-REFRESH</div>
         <div class="opt-row" id="wlRefOpts">
-          <button class="opt" data-wr="15">15 SEC</button>
-          <button class="opt on" data-wr="30">30 SEC</button>
+          <button class="opt" data-wr="10">10 SEC</button>
+          <button class="opt on" data-wr="15">15 SEC</button>
+          <button class="opt" data-wr="30">30 SEC</button>
           <button class="opt" data-wr="60">60 SEC</button>
           <button class="opt" data-wr="120">2 MIN</button>
         </div>
@@ -1122,7 +1139,7 @@ const DEFAULTS={
     accent:'gold',newsSize:'md',density:'normal',showDesc:false,
     wlColumns:{price:true,chg:true,pct:true,spark:true,range:false,volume:false,wk52:false}
   },
-  behavior:{newsRefresh:300,wlRefresh:30,autoStream:true,showFng:true},
+  behavior:{newsRefresh:120,wlRefresh:15,autoStream:true,showFng:true},
   layout:{showNews:true,showBroadcast:true,showWatch:true,maxStreams:4,secondaryTz:'',secondaryTzLabel:''}
 };
 
@@ -1163,6 +1180,8 @@ const CORS_PROXIES=[
 // Tracks which proxy index won most recently so it
 // gets a 200 ms head start on the next call.
 let _bestProxy=-1;
+try{const b=localStorage.getItem('wam_proxy');if(b!==null){const i=parseInt(b);if(i>=0&&i<CORS_PROXIES.length)_bestProxy=i;}}catch(e){}
+function setBestProxy(i){_bestProxy=i;try{localStorage.setItem('wam_proxy',i);}catch(e){}}
 
 async function proxyRace(url,ms=5000){
   // Fast path: try the known-good proxy first with a shorter fuse
@@ -1179,7 +1198,7 @@ async function proxyRace(url,ms=5000){
         if(i===_bestProxy)throw new Error('skip');
         const r=await fetch(fn(url),{signal:mkTimeout(ms)});
         if(!r.ok)throw new Error('not ok');
-        _bestProxy=i;
+        setBestProxy(i);
         return r;
       })
     );
@@ -1350,7 +1369,7 @@ function tick(){
 }
 tick();
 setInterval(tick,1000);
-setInterval(updateSessions,60000);
+setInterval(updateSessions,30000);
 updateSessions();
 
 // ══════════════════════════════════════════════
@@ -1376,22 +1395,31 @@ function buildTicker(tickers){
 async function fetchQuoteSingle(sym){
   // Attempt direct fetch first — works when the CDN / browser forwards CORS
   const directUrls=[
-    'https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=5d&includePrePost=false&corsDomain=finance.yahoo.com',
-    'https://query2.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=5d&includePrePost=false',
+    'https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=1mo&includePrePost=false&corsDomain=finance.yahoo.com',
+    'https://query2.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=1mo&includePrePost=false',
   ];
   function parseYfResult(j,sym){
     const result=j?.chart?.result?.[0];if(!result)return null;
     const meta=result.meta;if(meta?.regularMarketPrice==null)return null;
-    const prev=meta.chartPreviousClose??meta.previousClose??meta.regularMarketPrice;
-    const chg=meta.regularMarketPrice-prev;
     const closes=result.indicators?.quote?.[0]?.close||[];
+    // Prior-session close for the *daily* change. Prefer Yahoo's previousClose;
+    // fall back to the second-to-last point of the series (robust across asset
+    // types); chartPreviousClose is last because over a 1mo range it is the
+    // close before the whole window, which would yield a monthly change.
+    const valid=closes.filter(p=>p!=null&&!isNaN(p));
+    const seriesPrev=valid.length>=2?valid[valid.length-2]:null;
+    const prev=meta.previousClose??seriesPrev??meta.chartPreviousClose??meta.regularMarketPrice;
+    const chg=meta.regularMarketPrice-prev;
     return{symbol:sym,regularMarketPrice:meta.regularMarketPrice,regularMarketChange:chg,
       regularMarketChangePercent:prev?chg/prev*100:0,
+      previousClose:prev,
       regularMarketDayHigh:meta.regularMarketDayHigh??null,
       regularMarketDayLow:meta.regularMarketDayLow??null,
       regularMarketVolume:meta.regularMarketVolume??null,
       fiftyTwoWeekHigh:meta.fiftyTwoWeekHigh??null,
       fiftyTwoWeekLow:meta.fiftyTwoWeekLow??null,
+      currency:meta.currency||null,
+      exchangeName:meta.fullExchangeName||meta.exchangeName||null,
       marketState:(meta.marketState||'UNKNOWN').toUpperCase(),
       _closes:closes};
   }
@@ -1404,7 +1432,7 @@ async function fetchQuoteSingle(sym){
     }catch(e){continue;}
   }
   // Proxy fallback
-  const mkUrl=h=>'https://'+h+'.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=5d&includePrePost=false';
+  const mkUrl=h=>'https://'+h+'.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=1mo&includePrePost=false';
   for(const host of['query1','query2']){
     try{
       const r=await proxyRace(mkUrl(host),6000);
@@ -1452,18 +1480,29 @@ function fmtVol(v){
   return String(Math.round(v));
 }
 
+let _sparkId=0;
 function sparkSvg(closes,isUp){
   const pts=(closes||[]).filter(p=>p!=null&&!isNaN(p));
   if(pts.length<2)return'<span style="color:var(--muted2)">—</span>';
   const mn=Math.min(...pts),mx=Math.max(...pts),rng=mx-mn||1;
-  const W=76,H=24;
-  const path=pts.map((p,i)=>{
-    const x=(i/(pts.length-1))*W;
-    const y=H-2-((p-mn)/rng)*(H-4);
-    return x.toFixed(1)+','+y.toFixed(1);
-  }).join(' ');
+  const W=76,H=24,pad=2.5;
+  const coords=pts.map((p,i)=>[(i/(pts.length-1))*W,H-pad-((p-mn)/rng)*(H-pad*2)]);
+  const line=coords.map(c=>c[0].toFixed(1)+','+c[1].toFixed(1)).join(' ');
+  const area='0,'+H+' '+line+' '+W.toFixed(1)+','+H;
   const col=isUp?'var(--green2)':'var(--red2)';
-  return'<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="display:block;flex-shrink:0"><polyline points="'+path+'" fill="none" stroke="'+col+'" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+  const id='sg'+(++_sparkId);
+  return'<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="display:block;flex-shrink:0">'
+    +'<defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1">'
+    +'<stop offset="0%" stop-color="'+col+'" stop-opacity="0.30"/>'
+    +'<stop offset="100%" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>'
+    +'<polygon points="'+area+'" fill="url(#'+id+')" stroke="none"/>'
+    +'<polyline points="'+line+'" fill="none" stroke="'+col+'" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>'
+    +'</svg>';
+}
+function pctBadge(p){
+  if(p==null||isNaN(p))return'<span class="wl-pct-badge flat">--</span>';
+  const cls=p>=0?'up':'dn';
+  return'<span class="wl-pct-badge '+cls+'">'+(p>=0?'▲':'▼')+' '+Math.abs(p).toFixed(2)+'%</span>';
 }
 
 function rangeCellHtml(price,low,high){
@@ -1492,6 +1531,9 @@ function setSbDot(id,state){
 // WATCHLIST
 // ══════════════════════════════════════════════
 let wlTab=0,wlCache={},wlTimer=null,_wlFetching=false;
+let wlSort={col:null,dir:-1};   // column sort state (null = configured order)
+const _wlRetried={};            // one-shot auto-retry guard per tab
+const _wlPrev={};               // last seen price per symbol → flash on change
 
 function buildWlTabs(){
   const el=document.getElementById('wlTabs');el.innerHTML='';
@@ -1514,8 +1556,17 @@ document.getElementById('wlRefBtn').addEventListener('click',()=>{
   const t=S.watchlist[wlTab];if(t){delete wlCache[t.id];loadWlTab(false);}
 });
 
-// Click-to-chart via event delegation
+// Click-to-chart + column sorting via event delegation
 document.getElementById('wlBody').addEventListener('click',e=>{
+  const th=e.target.closest('th[data-sort]');
+  if(th){
+    const col=th.dataset.sort;
+    if(wlSort.col===col)wlSort.dir*=-1;
+    else{wlSort.col=col;wlSort.dir=col==='name'?1:-1;}
+    const tab=S.watchlist[wlTab];const cached=wlCache[tab?.id];
+    if(cached)renderWlTable(tab,cached.q);
+    return;
+  }
   const tr=e.target.closest('tr[data-chart-tv]');if(!tr)return;
   openChart(tr.dataset.chartName,tr.dataset.chartTv);
 });
@@ -1526,7 +1577,7 @@ async function loadWlTab(useCache=true){
     document.getElementById('wlBody').innerHTML='<div class="wl-msg">NO SYMBOLS CONFIGURED<br><span style="font-size:9px;color:var(--muted2)">Add via &#9881; CONFIGURE</span></div>';
     setSbDot('sdPrices','warn');return;
   }
-  const ttl=(S.behavior?.wlRefresh||15)*1000;
+  const ttl=(S.behavior?.wlRefresh||30)*1000;
   const cached=wlCache[tab.id];
   // Stale-while-revalidate: paint cached data immediately so the UI
   // never shows a blank panel during a background refresh.
@@ -1546,8 +1597,15 @@ async function loadWlTab(useCache=true){
       }
       document.getElementById('wlStat').textContent='ERROR';
       document.getElementById('wlTs').textContent='FAILED · '+new Date().toLocaleTimeString('en-GB',{hour12:false});
-      setSbDot('sdPrices','err');return;
+      setSbDot('sdPrices','err');
+      // One-shot auto-retry — proxies are flaky, a second attempt often succeeds
+      if(!_wlRetried[tab.id]){
+        _wlRetried[tab.id]=true;
+        setTimeout(()=>{if(S.watchlist[wlTab]?.id===tab.id)loadWlTab(false);},4000);
+      }
+      return;
     }
+    delete _wlRetried[tab.id];
     wlCache[tab.id]={q:quotes,ts:Date.now()};
     renderWlTable(tab,quotes);setSbDot('sdPrices','ok');
   }finally{
@@ -1561,29 +1619,53 @@ function renderWlTable(tab,quotes){
   document.getElementById('wlStat').textContent='GST '+now;
   document.getElementById('wlTs').textContent='UPDATED '+now;
   const cols=S.appearance?.wlColumns||DEFAULTS.appearance.wlColumns;
-  let th='<th>INSTRUMENT</th>';
-  if(cols.price)th+='<th>LAST</th>';
-  if(cols.chg)th+='<th>CHG</th>';
-  if(cols.pct)th+='<th>CHG%</th>';
-  if(cols.spark)th+='<th style="padding-right:10px">5D</th>';
+  const arrow=c=>wlSort.col===c?'<span class="wl-sort-arrow">'+(wlSort.dir>0?'▲':'▼')+'</span>':'';
+  let th='<th data-sort="name">INSTRUMENT'+arrow('name')+'</th>';
+  if(cols.price)th+='<th data-sort="price">LAST'+arrow('price')+'</th>';
+  if(cols.chg)th+='<th data-sort="chg">CHG'+arrow('chg')+'</th>';
+  if(cols.pct)th+='<th data-sort="pct">CHG%'+arrow('pct')+'</th>';
+  if(cols.spark)th+='<th style="padding-right:10px">1M</th>';
   if(cols.range)th+='<th>DAY RANGE</th>';
-  if(cols.volume)th+='<th>VOL</th>';
+  if(cols.volume)th+='<th data-sort="vol">VOL'+arrow('vol')+'</th>';
   if(cols.wk52)th+='<th>52W H/L</th>';
   let html='<table class="wl-table"><thead><tr>'+th+'</tr></thead><tbody>';
-  tab.symbols.forEach(sym=>{
+  // Apply column sort (non-destructive — configured order is restored when wlSort.col is null)
+  let order=tab.symbols.slice();
+  if(wlSort.col){
+    const dir=wlSort.dir;
+    const fld={price:'regularMarketPrice',chg:'regularMarketChange',pct:'regularMarketChangePercent',vol:'regularMarketVolume'};
+    order.sort((a,b)=>{
+      if(wlSort.col==='name'){
+        return a.name.toLowerCase()<b.name.toLowerCase()?-dir:a.name.toLowerCase()>b.name.toLowerCase()?dir:0;
+      }
+      const key=fld[wlSort.col];
+      let va=qMap[a.yf]?.[key],vb=qMap[b.yf]?.[key];
+      va=(va==null||isNaN(va))?-Infinity:va;vb=(vb==null||isNaN(vb))?-Infinity:vb;
+      return (va-vb)*dir;
+    });
+  }
+  order.forEach(sym=>{
     const q=qMap[sym.yf];
     const price=q?.regularMarketPrice,chg=q?.regularMarketChange,pct=q?.regularMarketChangePercent;
     const isUp=(chg||0)>=0;const cls=isUp?'up':'dn';
     const tvSym=sym.tv||yfToTv(sym.yf);
+    const subMeta=esc(sym.yf)+(q?.currency?' · '+esc(q.currency):'');
     let row='<tr data-chart-name="'+esc(sym.name)+'" data-chart-tv="'+esc(tvSym)+'">';
-    row+='<td><span class="wl-name">'+mstateDot(q?.marketState)+esc(sym.name)+'</span><span class="wl-sym">'+esc(sym.yf)+'</span></td>';
-    if(cols.price)row+='<td class="wl-price">'+fmtPrice(price)+'</td>';
+    row+='<td><span class="wl-name">'+mstateDot(q?.marketState)+esc(sym.name)+'</span><span class="wl-sym">'+subMeta+'</span></td>';
+    if(cols.price){
+      // Flash the cell green/red when the price moves between refreshes
+      const pk=tab.id+'|'+sym.yf,old=_wlPrev[pk];
+      let fl='';
+      if(price!=null&&old!=null&&price!==old)fl=price>old?' wl-flash-up':' wl-flash-dn';
+      if(price!=null)_wlPrev[pk]=price;
+      row+='<td class="wl-price'+fl+'">'+fmtPrice(price)+'</td>';
+    }
     if(cols.chg)row+='<td class="'+cls+'">'+fmtChg(chg)+'</td>';
-    if(cols.pct)row+='<td class="'+cls+'">'+fmtPct(pct)+'</td>';
+    if(cols.pct)row+='<td>'+pctBadge(pct)+'</td>';
     if(cols.spark)row+='<td style="padding-right:10px">'+sparkSvg(q?._closes,isUp)+'</td>';
     if(cols.range)row+='<td class="wl-range-cell">'+rangeCellHtml(price,q?.regularMarketDayLow,q?.regularMarketDayHigh)+'</td>';
     if(cols.volume)row+='<td class="wl-vol">'+fmtVol(q?.regularMarketVolume)+'</td>';
-    if(cols.wk52)row+='<td class="wl-52w">'+(q?.fiftyTwoWeekHigh!=null?fmtPrice(q.fiftyTwoWeekHigh)+' / '+fmtPrice(q.fiftyTwoWeekLow):'--')+'</td>';
+    if(cols.wk52)row+='<td class="wl-range-cell">'+rangeCellHtml(price,q?.fiftyTwoWeekLow,q?.fiftyTwoWeekHigh)+'</td>';
     row+='</tr>';
     html+=row;
   });
@@ -1666,6 +1748,17 @@ function ago(d){
   if(m<1440)return Math.floor(m/60)+'h';return Math.floor(m/1440)+'d';
 }
 
+// Collapse the same story arriving from multiple feeds (keeps the first/newest)
+function dedupeNews(items){
+  const seen=new Set(),out=[];
+  for(const it of items){
+    const k=(it.title||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().slice(0,80);
+    if(!k||seen.has(k))continue;
+    seen.add(k);out.push(it);
+  }
+  return out;
+}
+
 function renderNews(items){
   const el=document.getElementById('newsList');
   const showDesc=S.appearance?.showDesc;
@@ -1709,37 +1802,56 @@ document.getElementById('filterBtns').addEventListener('click',async e=>{
   const b=e.target.closest('[data-f]');if(!b)return;
   currentFilter=b.dataset.f;
   document.querySelectorAll('#filterBtns .pbtn').forEach(x=>x.classList.toggle('on',x.dataset.f===currentFilter));
-  await runFilter();
+  await refreshNews(true);   // swap sources without blanking the list
 });
 
-async function runFilter(){
+// Core fetch — honours the active source filter; returns deduped, newest-first
+async function fetchNewsItems(){
   const active=S.feeds.filter(f=>f.on);
-  document.getElementById('newsList').innerHTML='<div class="ni-msg">FETCHING...</div>';
+  if(!active.length)return[];
   let items;
   if(currentFilter==='all'){
-    items=(await Promise.allSettled(active.map(fetchFeed))).filter(r=>r.status==='fulfilled').flatMap(r=>r.value).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    items=(await Promise.allSettled(active.map(fetchFeed))).filter(r=>r.status==='fulfilled').flatMap(r=>r.value);
   }else{
     const feed=active.find(f=>f.key===currentFilter);
-    items=feed?(await fetchFeed(feed)).sort((a,b)=>new Date(b.date)-new Date(a.date)):[];
+    items=feed?await fetchFeed(feed):[];
   }
-  allNewsItems=items;
-  newsQuery?filterAndRenderNews(newsQuery):renderNews(items);
+  return dedupeNews(items.sort((a,b)=>new Date(b.date)-new Date(a.date)));
+}
+
+let _newsGen=0;
+// Background refresh — the list is NEVER blanked while data is on screen.
+// The "FETCHING" placeholder shows only on a true cold start. A generation
+// token ensures a slower in-flight fetch can't overwrite a newer one (e.g.
+// after a filter switch).
+async function refreshNews(silent=true){
+  const gen=++_newsGen;
+  const list=document.getElementById('newsList');
+  const fs=document.getElementById('feedStat');
+  const cold=!allNewsItems.length;
+  if(!silent&&cold)list.innerHTML='<div class="ni-msg">FETCHING FEEDS...</div>';
+  setSbDot('sdNews','warn');
+  if(!cold)fs.textContent='SYNCING…';
+  const items=await fetchNewsItems();
+  if(gen!==_newsGen)return;                 // superseded — drop this result
+  if(items.length){
+    allNewsItems=items;
+    newsQuery?filterAndRenderNews(newsQuery):renderNews(items);
+  }else if(cold){
+    renderNews([]);                          // nothing to fall back on → show empty state
+  }else{
+    setSbDot('sdNews','ok');                 // keep current items, just end the sync label
+    fs.textContent=allNewsItems.length+' ARTICLES · '+new Date().toLocaleTimeString('en-GB',{hour12:false});
+  }
 }
 
 async function loadNews(){
   currentFilter='all';buildFilterBtns();
-  document.getElementById('newsList').innerHTML='<div class="ni-msg">FETCHING FEEDS...</div>';
-  setSbDot('sdNews','warn');
-  const active=S.feeds.filter(f=>f.on);
-  if(!active.length){allNewsItems=[];renderNews([]);return;}
-  const results=await Promise.allSettled(active.map(fetchFeed));
-  const items=results.filter(r=>r.status==='fulfilled').flatMap(r=>r.value).sort((a,b)=>new Date(b.date)-new Date(a.date));
-  allNewsItems=items;
-  newsQuery?filterAndRenderNews(newsQuery):renderNews(items);
+  await refreshNews(false);
 }
 function startNewsRefresh(){
   if(newsTimer)clearInterval(newsTimer);
-  newsTimer=setInterval(()=>{newsCache={};runFilter();},(S.behavior?.newsRefresh||300)*1000);
+  newsTimer=setInterval(()=>{newsCache={};refreshNews(true);},(S.behavior?.newsRefresh||120)*1000);
 }
 
 // News search
@@ -1774,6 +1886,7 @@ function createSlot(stream){
   const slot=document.createElement('div');slot.className='slot';slot.dataset.key=stream.key;
   const liveUrl=stream.vid?'https://www.youtube.com/watch?v='+stream.vid:(stream.link||('https://www.youtube.com/channel/'+(stream.cid||'')+'/live'));
   slot.innerHTML='<div class="slot-label">'+esc(stream.name)+'</div>'
+    +'<button class="slot-reload" title="Reload stream">&#8635;</button>'
     +'<iframe src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
     +'<div class="slot-ov"><div class="slot-ov-msg">LOADING...</div><a class="slot-ov-lnk" href="'+esc(liveUrl)+'" target="_blank" rel="noopener">OPEN</a></div>';
   return slot;
@@ -1805,6 +1918,22 @@ function removeFromGrid(key){
   if(!activeStreamKeys.length){const e=document.querySelector('.stream-empty');if(e)e.style.display='flex';}
   updateGridLayout();
 }
+
+// Reload a single slot — recovers a stalled embed or a rotated YouTube live ID
+function reloadSlot(key){
+  const slot=document.querySelector('.slot[data-key="'+key+'"]');if(!slot)return;
+  const stream=S.streams.find(s=>s.key===key);if(!stream)return;
+  const ov=slot.querySelector('.slot-ov');const msg=slot.querySelector('.slot-ov-msg');
+  if(ov)ov.classList.remove('hidden');if(msg)msg.textContent='RELOADING...';
+  const fr=slot.querySelector('iframe');if(fr)fr.src='';
+  launchSlot(slot,stream);
+}
+
+document.getElementById('streamGrid').addEventListener('click',e=>{
+  const btn=e.target.closest('.slot-reload');if(!btn)return;
+  e.stopPropagation();
+  const slot=btn.closest('.slot');if(slot)reloadSlot(slot.dataset.key);
+});
 
 function buildStreamBtns(){
   const active=S.streams.filter(s=>s.on);
@@ -1881,7 +2010,7 @@ document.getElementById('chartModalClose').addEventListener('click',closeChart);
 // ══════════════════════════════════════════════
 let fngCache=null,fngTs=0;
 async function fetchFearGreed(){
-  if(fngCache&&Date.now()-fngTs<3600000)return fngCache;
+  if(fngCache&&Date.now()-fngTs<900000)return fngCache;  // 15-min cache
   const FNG_URL='https://api.alternative.me/fng/?limit=1';
   async function tryParse(text){
     let j;try{const w=JSON.parse(text);j=w.contents?JSON.parse(w.contents):w;}catch(e){return null;}
@@ -1964,7 +2093,7 @@ document.addEventListener('keydown',e=>{
     const i=parseInt(k)-1;
     if(i<S.watchlist.length){wlTab=i;document.querySelectorAll('.wl-tab').forEach((x,xi)=>x.classList.toggle('on',xi===i));loadWlTab(false);}
   }else if(k==='r'||k==='R'){const t=S.watchlist[wlTab];if(t){delete wlCache[t.id];loadWlTab(false);}}
-  else if(k==='n'||k==='N'){newsCache={};runFilter();}
+  else if(k==='n'||k==='N'){newsCache={};refreshNews(true);}
   else if(k==='s'||k==='S'){document.getElementById('newsSearchToggle').click();}
   else if(k==='c'||k==='C'){toggleCal();}
   else if(k===','||k==='<'){openCfg('symbols');}
@@ -2399,6 +2528,8 @@ buildWlTabs();loadWlTab(false);startWlRefresh();
 loadNews();startNewsRefresh();
 buildStreamBtns();
 if(S.behavior?.showFng!==false)updateFearGreed();
+// Keep the slower-moving dataset live too (sessions handled above at 30s)
+setInterval(()=>{if(S.behavior?.showFng!==false)updateFearGreed();},900000); // F&G every 15m
 </script>
 </body>
 </html>
