@@ -13,8 +13,9 @@
   --accent:#e8a830;--accent2:#f4c060;
   --green:#00cc7a;--green2:#00f090;
   --red:#cc4444;--red2:#f07070;
+  --warn:#e0c336;--warn2:#f3da6e;
   --news-fs:12.5px;--wl-pad:9px 10px;
-  --cw0:275px;--cw2:360px;
+  --cw0:275px;--cw2:360px;--cw3:300px;
   --radius:4px;--radius2:6px;
 }
 html,body{height:100%;overflow:hidden;background:var(--bg)}
@@ -170,6 +171,57 @@ body{display:flex;flex-direction:column;height:100vh;font-family:'Poppins',sans-
 .retry{font-family:'Poppins',sans-serif;font-size:9px;padding:5px 14px;background:transparent;border:1px solid var(--accent);color:var(--accent);cursor:pointer;letter-spacing:.1em;text-transform:uppercase;margin-top:10px;display:inline-block;transition:all .15s}
 .retry:hover{background:rgba(184,137,58,.1)}
 
+/* RISK MONITOR */
+#colRisk{width:var(--cw3);flex-shrink:0}
+.risk-scroll{flex:1;overflow-y:auto;min-height:0;padding:10px;-webkit-overflow-scrolling:touch}
+.risk-scroll::-webkit-scrollbar{width:3px}
+.risk-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.risk-tabs{display:flex;gap:4px;margin-bottom:11px;padding-bottom:9px;border-bottom:1px solid var(--border)}
+.risk-tab{font-family:'Poppins',sans-serif;font-size:8.5px;padding:5px 10px;background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:pointer;letter-spacing:.07em;text-transform:uppercase;transition:all .15s}
+.risk-tab:hover{color:var(--sub);border-color:var(--muted)}
+.risk-tab.on{color:var(--accent);border-color:var(--accent);background:rgba(184,137,58,.07)}
+.risk-comp{margin-bottom:12px}
+.risk-comp-lbl{display:flex;justify-content:space-between;align-items:center;font-family:'Poppins',sans-serif;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.risk-comp-tag{font-size:8.5px;padding:1px 7px;border-radius:3px;letter-spacing:.05em}
+.risk-comp-tag.ok{color:var(--green2);background:rgba(0,240,144,.1)}
+.risk-comp-tag.warn{color:var(--warn2);background:rgba(224,195,54,.14)}
+.risk-comp-tag.crit{color:var(--red2);background:rgba(240,112,112,.12)}
+.risk-comp-tag.unk{color:var(--muted2);background:rgba(255,255,255,.04)}
+.risk-comp-bar{height:6px;background:var(--panel2);border:1px solid var(--border2);border-radius:3px;overflow:hidden}
+.risk-comp-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.risk-comp-fill.ok{background:var(--green2)}
+.risk-comp-fill.warn{background:var(--warn2)}
+.risk-comp-fill.crit{background:var(--red2)}
+.risk-comp-fill.unk{background:var(--muted2)}
+.risk-tiles{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.risk-tile{border:1px solid var(--border);background:var(--panel);padding:8px 9px;border-radius:4px}
+.risk-tile-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.risk-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--muted2)}
+.risk-dot.ok{background:var(--green2)}
+.risk-dot.warn{background:var(--warn2);box-shadow:0 0 6px rgba(224,195,54,.45)}
+.risk-dot.crit{background:var(--red2);box-shadow:0 0 6px rgba(240,112,112,.5)}
+.risk-tile-lbl{font-family:'Poppins',sans-serif;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--sub)}
+.risk-tile-val{font-family:'Poppins',sans-serif;font-size:16px;color:var(--text);font-weight:500}
+.risk-tile-sub{font-size:9.5px;color:var(--muted);margin-top:1px}
+.risk-tile-spark{margin-top:4px}
+.risk-tile-desc{font-size:9px;color:var(--muted2);margin-top:4px;line-height:1.35}
+.risk-note{font-size:8.5px;color:var(--muted2);line-height:1.5;padding:2px 1px 12px;letter-spacing:.02em}
+.risk-cta{background:none;border:none;padding:0;font-family:'Poppins',sans-serif;font-size:9.5px;color:var(--accent);cursor:pointer;letter-spacing:.02em;text-decoration:underline;text-underline-offset:2px}
+.risk-cta:hover{color:var(--accent2)}
+@keyframes risk-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.ppbtn.alert{border-color:var(--red2);color:var(--red2);animation:risk-pulse 1.1s ease-in-out infinite}
+.sb-dot.alert{background:var(--red2);box-shadow:0 0 6px rgba(240,112,112,.6);animation:risk-pulse 1.1s ease-in-out infinite}
+.risk-alertlog{margin-top:14px;border-top:1px solid var(--border);padding-top:10px}
+.risk-alertlog-hdr{display:flex;align-items:center;justify-content:space-between;font-family:'Poppins',sans-serif;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.risk-alert-row{display:flex;align-items:baseline;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);font-size:9.5px}
+.risk-alert-row:last-child{border-bottom:none}
+.risk-alert-ts{color:var(--muted2);font-size:8px;flex-shrink:0}
+.risk-alert-lbl{color:var(--sub);flex:1}
+.risk-alert-tr{font-size:8.5px;letter-spacing:.03em;text-transform:uppercase;flex-shrink:0}
+.risk-alert-tr.up{color:var(--red2)}
+.risk-alert-tr.down{color:var(--green2)}
+.risk-alert-empty{font-size:9px;color:var(--muted2);padding:6px 0}
+
 /* CHART MODAL */
 .chart-modal{position:fixed;inset:0;z-index:150;background:rgba(4,6,10,.8);display:none;align-items:center;justify-content:center}
 .chart-modal.open{display:flex}
@@ -201,7 +253,7 @@ body{display:flex;flex-direction:column;height:100vh;font-family:'Poppins',sans-
 /* SETTINGS */
 .s-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;display:none}
 .s-ov.open{display:block}
-.s-panel{position:fixed;top:0;right:-520px;width:500px;height:100vh;background:var(--panel2);border-left:1px solid var(--border2);z-index:100;display:flex;flex-direction:column;transition:right .28s cubic-bezier(.25,.46,.45,.94)}
+.s-panel{position:fixed;top:0;right:-615px;width:595px;height:100vh;background:var(--panel2);border-left:1px solid var(--border2);z-index:100;display:flex;flex-direction:column;transition:right .28s cubic-bezier(.25,.46,.45,.94)}
 .s-panel.open{right:0}
 .s-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--border2);flex-shrink:0;background:var(--panel)}
 .s-ttl{font-family:'Poppins',sans-serif;font-size:11px;letter-spacing:.18em;color:var(--accent)}
@@ -209,7 +261,7 @@ body{display:flex;flex-direction:column;height:100vh;font-family:'Poppins',sans-
 .s-cls:hover{border-color:var(--red);color:var(--red)}
 .s-navs{display:flex;border-bottom:1px solid var(--border2);flex-shrink:0;background:var(--panel);overflow-x:auto}
 .s-navs::-webkit-scrollbar{display:none}
-.s-nav{font-family:'Poppins',sans-serif;font-size:8.5px;padding:9px 10px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.s-nav{font-family:'Poppins',sans-serif;font-size:8.5px;padding:9px 8px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;white-space:nowrap;flex-shrink:0}
 .s-nav:hover{color:var(--sub)}
 .s-nav.on{color:var(--accent);border-bottom-color:var(--accent)}
 .s-body{flex:1;overflow-y:auto;padding:16px 18px}
@@ -648,6 +700,7 @@ body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
     <button class="ppbtn on" id="ppNews" title="Toggle News [Alt+1]">NEWS</button>
     <button class="ppbtn on" id="ppBroadcast" title="Toggle Broadcast [Alt+2]">BCAST</button>
     <button class="ppbtn on" id="ppWatch" title="Toggle Watchlist [Alt+3]">WATCH</button>
+    <button class="ppbtn on" id="ppRisk" title="Toggle Risk Monitor [Alt+4]">RISK</button>
   </div>
   <div class="hdr-sep"></div>
   <div class="sessions" id="sessions">
@@ -728,6 +781,20 @@ body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
     </div>
   </div>
 
+  <div class="rh" id="rh3"></div>
+
+  <!-- RISK MONITOR -->
+  <div class="col" id="colRisk">
+    <div class="col-hdr">
+      <span class="col-label">RISK MONITOR</span>
+      <div style="display:flex;align-items:center;gap:7px">
+        <span class="wl-ts" id="riskStat" style="font-size:8px;color:var(--muted)">—</span>
+        <button class="pbtn" id="riskRefBtn" title="Refresh">&#8635;</button>
+      </div>
+    </div>
+    <div class="risk-scroll" id="riskGrid"><div class="wl-msg">LOADING...</div></div>
+  </div>
+
 </div>
 
 <!-- CHART MODAL -->
@@ -755,6 +822,7 @@ body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
   <span><span class="sb-dot" id="sdTicker"></span>TICKER</span>
   <span><span class="sb-dot w" id="sdPrices"></span>PRICES</span>
   <span><span class="sb-dot w" id="sdNews"></span>NEWS</span>
+  <span><span class="sb-dot w" id="sdRisk"></span>RISK</span>
   <span><span class="sb-dot w" id="sdStream"></span>STREAM</span>
   <span id="feedStat" style="color:var(--muted2)">LOADING...</span>
   <span id="sbFng" style="color:var(--muted2)"></span>
@@ -775,6 +843,7 @@ body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
     <button class="s-nav on" data-pg="symbols">SYMBOLS</button>
     <button class="s-nav" data-pg="feeds">FEEDS</button>
     <button class="s-nav" data-pg="streams">BROADCAST</button>
+    <button class="s-nav" data-pg="macro">MACRO</button>
     <button class="s-nav" data-pg="layout">LAYOUT</button>
     <button class="s-nav" data-pg="appearance">APPEARANCE</button>
     <button class="s-nav" data-pg="behavior">BEHAVIOR</button>
@@ -853,6 +922,31 @@ body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
       </div>
     </div>
 
+    <!-- MACRO DATA -->
+    <div class="s-pg" id="pg-macro">
+      <div class="s-sec">
+        <div class="s-sec-hdr">FRED API KEY</div>
+        <div class="s-add">
+          <input class="s-inp" id="fredKeyInp" placeholder="Paste your FRED API key" style="flex:1" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="s-note">
+          Powers the Financial Conditions, Credit Spread, Breakeven Inflation and Fed Balance Sheet tiles in the Risk Monitor panel.
+          Free, instant, no billing — register at <span style="color:var(--accent)">fredaccount.stlouisfed.org/apikeys</span>.
+          Stored only in this browser's local storage; sent directly to the St. Louis Fed API (via a CORS proxy) on each refresh.
+          Leave blank to hide those tiles.
+        </div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">RISK ALERTS</div>
+        <div class="ctog-row"><button class="tog on" id="cfgRiskAlerts"><div class="tog-k"></div></button><span class="ctog-lbl">DESKTOP NOTIFICATIONS ON CRITICAL CROSSINGS</span></div>
+        <div class="s-note">When a Risk Monitor tile or composite gauge crosses into the red zone, show a browser notification (permission requested on first trigger) and flash the RISK button. Every status change is always logged in the panel's alert log regardless of this setting.</div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-hdr">JPY POSITIONING (CFTC)</div>
+        <div class="s-note">The "JPY Spec Positioning" tile reads the CFTC's public Commitments of Traders data directly — no API key needed. Weekly, updated Fridays.</div>
+      </div>
+    </div>
+
     <!-- LAYOUT -->
     <div class="s-pg" id="pg-layout">
       <div class="s-sec">
@@ -860,6 +954,7 @@ body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
         <div class="ctog-row"><button class="tog on" id="cfgShowNews"><div class="tog-k"></div></button><span class="ctog-lbl">NEWS PANEL</span></div>
         <div class="ctog-row"><button class="tog on" id="cfgShowBroadcast"><div class="tog-k"></div></button><span class="ctog-lbl">BROADCAST PANEL</span></div>
         <div class="ctog-row"><button class="tog on" id="cfgShowWatch"><div class="tog-k"></div></button><span class="ctog-lbl">WATCHLIST PANEL</span></div>
+        <div class="ctog-row"><button class="tog on" id="cfgShowRisk"><div class="tog-k"></div></button><span class="ctog-lbl">RISK MONITOR PANEL</span></div>
         <div class="s-note">Visibility changes apply immediately and persist across sessions.</div>
       </div>
       <div class="s-sec">
@@ -1016,6 +1111,7 @@ body{font-family:'Poppins',sans-serif;letter-spacing:0;font-size:13px}
           <tr><td>Alt + 1</td><td>Toggle news panel</td></tr>
           <tr><td>Alt + 2</td><td>Toggle broadcast panel</td></tr>
           <tr><td>Alt + 3</td><td>Toggle watchlist panel</td></tr>
+          <tr><td>Alt + 4</td><td>Toggle risk monitor panel</td></tr>
         </table>
         <div class="s-note" style="margin-top:12px">Shortcuts inactive when a text input is focused. Drag column handles to resize panels. Click any watchlist row to open its TradingView chart.</div>
       </div>
@@ -1140,7 +1236,8 @@ const DEFAULTS={
     wlColumns:{price:true,chg:true,pct:true,spark:true,range:false,volume:false,wk52:false}
   },
   behavior:{newsRefresh:120,wlRefresh:15,autoStream:true,showFng:true},
-  layout:{showNews:true,showBroadcast:true,showWatch:true,maxStreams:4,secondaryTz:'',secondaryTzLabel:''}
+  layout:{showNews:true,showBroadcast:true,showWatch:true,showRisk:true,maxStreams:4,secondaryTz:'',secondaryTzLabel:''},
+  integrations:{fredApiKey:'',riskAlerts:true}
 };
 
 // ══════════════════════════════════════════════
@@ -1156,6 +1253,7 @@ function loadState(){
       p.appearance.wlColumns=Object.assign({},DEFAULTS.appearance.wlColumns,p.appearance.wlColumns||{});
       p.behavior=Object.assign({},DEFAULTS.behavior,p.behavior||{});
       p.layout=Object.assign({},DEFAULTS.layout,p.layout||{});
+      p.integrations=Object.assign({},DEFAULTS.integrations,p.integrations||{});
       return p;
     }
   }catch(e){}
@@ -1214,33 +1312,38 @@ async function proxyJson(r){
 // ══════════════════════════════════════════════
 // COLUMN RESIZE
 // ══════════════════════════════════════════════
-const colWidths={cw0:270,cw2:355};
+const colWidths={cw0:270,cw2:355,cw3:300};
 (function(){try{const c=localStorage.getItem('wam_cols');if(c)Object.assign(colWidths,JSON.parse(c));}catch(e){}})();
 function applyColWidths(){
   document.documentElement.style.setProperty('--cw0',colWidths.cw0+'px');
   document.documentElement.style.setProperty('--cw2',colWidths.cw2+'px');
+  document.documentElement.style.setProperty('--cw3',colWidths.cw3+'px');
 }
 applyColWidths();
 function saveColWidths(){try{localStorage.setItem('wam_cols',JSON.stringify(colWidths));}catch(e){}}
 
-['rh1','rh2'].forEach(id=>{
-  const el=document.getElementById(id);
-  const side=id==='rh1'?'left':'right';
+// Each handle drags one fixed-width column; the flex-basis budget it may
+// grow into is mainArea width minus the OTHER fixed columns and a floor
+// for the flexible Broadcast column (220px) plus the handles' own width.
+const RESIZE_HANDLES=[
+  {id:'rh1',key:'cw0',dir:'left', others:()=>colWidths.cw2+colWidths.cw3},
+  {id:'rh2',key:'cw2',dir:'right',others:()=>colWidths.cw0+colWidths.cw3},
+  {id:'rh3',key:'cw3',dir:'right',others:()=>colWidths.cw0+colWidths.cw2},
+];
+RESIZE_HANDLES.forEach(cfg=>{
+  const el=document.getElementById(cfg.id);
   el.addEventListener('mousedown',e=>{
     e.preventDefault();
     const startX=e.clientX;
-    const startW=side==='left'?colWidths.cw0:colWidths.cw2;
+    const startW=colWidths[cfg.key];
     el.classList.add('dragging');
     document.body.style.cursor='col-resize';
     document.body.style.userSelect='none';
     function onMove(e){
       const dx=e.clientX-startX;
       const mainW=document.getElementById('mainArea').getBoundingClientRect().width;
-      if(side==='left'){
-        colWidths.cw0=Math.max(160,Math.min(mainW-colWidths.cw2-220-10,startW+dx));
-      }else{
-        colWidths.cw2=Math.max(160,Math.min(mainW-colWidths.cw0-220-10,startW-dx));
-      }
+      const budget=mainW-cfg.others()-220-15;
+      colWidths[cfg.key]=Math.max(160,Math.min(budget,cfg.dir==='left'?startW+dx:startW-dx));
       applyColWidths();
     }
     function onUp(){
@@ -1261,37 +1364,36 @@ function saveColWidths(){try{localStorage.setItem('wam_cols',JSON.stringify(colW
 // ══════════════════════════════════════════════
 function applyPanelLayout(){
   const l=S.layout||{};
-  const n=l.showNews!==false,b=l.showBroadcast!==false,w=l.showWatch!==false;
+  const n=l.showNews!==false,b=l.showBroadcast!==false,w=l.showWatch!==false,rk=l.showRisk!==false;
   document.getElementById('colNews').style.display=n?'':'none';
   document.getElementById('colBroadcast').style.display=b?'':'none';
   document.getElementById('colWatch').style.display=w?'':'none';
+  document.getElementById('colRisk').style.display=rk?'':'none';
   document.getElementById('rh1').style.display=(n&&b)?'':'none';
   document.getElementById('rh2').style.display=(b&&w)?'':'none';
-  ['ppNews','ppBroadcast','ppWatch'].forEach((id,i)=>{
-    const val=[n,b,w][i];
+  document.getElementById('rh3').style.display=(w&&rk)?'':'none';
+  ['ppNews','ppBroadcast','ppWatch','ppRisk'].forEach((id,i)=>{
+    const val=[n,b,w,rk][i];
     document.getElementById(id)?.classList.toggle('on',val);
   });
-  const ids=['cfgShowNews','cfgShowBroadcast','cfgShowWatch'];
+  const ids=['cfgShowNews','cfgShowBroadcast','cfgShowWatch','cfgShowRisk'];
   ids.forEach((id,i)=>{
     const el=document.getElementById(id);
-    if(el)el.classList.toggle('on',[n,b,w][i]);
+    if(el)el.classList.toggle('on',[n,b,w,rk][i]);
   });
 }
 
 function togglePanel(which,force){
   if(!S.layout)S.layout=clone(DEFAULTS.layout);
-  const keyMap={news:'showNews',broadcast:'showBroadcast',watch:'showWatch'};
+  const keyMap={news:'showNews',broadcast:'showBroadcast',watch:'showWatch',risk:'showRisk'};
   const key=keyMap[which];
   const cur=S.layout[key]!==false;
   const newVal=force!==undefined?force:!cur;
   if(!newVal){
     const l=S.layout;
-    const nOthers={
-      news:(l.showBroadcast!==false)||(l.showWatch!==false),
-      broadcast:(l.showNews!==false)||(l.showWatch!==false),
-      watch:(l.showNews!==false)||(l.showBroadcast!==false)
-    };
-    if(!nOthers[which])return;
+    const on={news:l.showNews!==false,broadcast:l.showBroadcast!==false,watch:l.showWatch!==false,risk:l.showRisk!==false};
+    const others=Object.keys(on).filter(k=>k!==which).some(k=>on[k]);
+    if(!others)return;
   }
   S.layout[key]=newVal;
   applyPanelLayout();
@@ -1301,6 +1403,7 @@ function togglePanel(which,force){
 document.getElementById('ppNews').addEventListener('click',()=>togglePanel('news'));
 document.getElementById('ppBroadcast').addEventListener('click',()=>togglePanel('broadcast'));
 document.getElementById('ppWatch').addEventListener('click',()=>togglePanel('watch'));
+document.getElementById('ppRisk').addEventListener('click',()=>togglePanel('risk'));
 
 // ══════════════════════════════════════════════
 // THEME
@@ -1677,6 +1780,377 @@ function startWlRefresh(){
   wlTimer=setInterval(()=>{const t=S.watchlist[wlTab];if(t){delete wlCache[t.id];loadWlTab(false);}},
     (S.behavior?.wlRefresh||30)*1000);
 }
+
+// ══════════════════════════════════════════════
+// RISK MONITOR
+// ══════════════════════════════════════════════
+// Heuristic early-warning board built entirely from data already fetched
+// via the Yahoo Finance quote layer above — no extra API keys required.
+// Every score is a transparent rule (see each indicator's `score` fn),
+// not a prediction — it flags stress, it doesn't forecast the Fed.
+function pctChangeFrom(q,daysAgo){
+  if(!q)return null;
+  const c=(q._closes||[]).filter(x=>x!=null&&!isNaN(x));
+  if(!c.length)return null;
+  const idx=c.length-1-daysAgo;
+  if(idx<0||!c[idx])return null;
+  return (q.regularMarketPrice-c[idx])/c[idx]*100;
+}
+function quoteMetric(q){
+  if(!q)return null;
+  return{value:q.regularMarketPrice,pct1d:q.regularMarketChangePercent,pct5d:pctChangeFrom(q,5),closes:q._closes};
+}
+// v<=warn -> 0-40 ("ok"), warn<v<=crit -> 40-75 ("warn"), v>crit -> 75-100 ("crit")
+function normScore(v,warn,crit){
+  if(v==null||isNaN(v)||v<=0)return 0;
+  if(v<=warn)return(v/warn)*40;
+  if(v<=crit)return 40+((v-warn)/(crit-warn))*35;
+  return Math.min(100,75+((v-crit)/crit)*25);
+}
+function statusFromScore(s){return s==null?'unk':s>=75?'crit':s>=40?'warn':'ok';}
+function compositeLabel(s){return s>=75?'HIGH':s>=40?'ELEVATED':'LOW';}
+
+// ── FRED (St. Louis Fed) data layer — needs a free user-supplied API key ──
+let fredCache={};
+async function fetchFredSeries(seriesId,limit){
+  const key=(S.integrations?.fredApiKey||'').trim();
+  if(!key)return null;
+  const cached=fredCache[seriesId];
+  if(cached&&Date.now()-cached.ts<900000)return cached.data;
+  const url='https://api.stlouisfed.org/fred/series/observations?series_id='+encodeURIComponent(seriesId)
+    +'&api_key='+encodeURIComponent(key)+'&file_type=json&sort_order=desc&limit='+(limit||30);
+  try{
+    const r=await proxyRace(url,7000);
+    if(!r)return null;
+    const j=await proxyJson(r);
+    if(!j||!Array.isArray(j.observations))return null;
+    const obs=j.observations
+      .map(o=>({date:o.date,value:o.value==='.'?null:parseFloat(o.value)}))
+      .filter(o=>o.value!=null&&!isNaN(o.value));
+    if(!obs.length)return null;
+    fredCache[seriesId]={data:obs,ts:Date.now()};
+    return obs;
+  }catch(e){return null;}
+}
+// obs is newest-first; lookback = how many observations back to diff against
+function fredMetric(obs,lookback){
+  if(!obs||!obs.length)return null;
+  const value=obs[0].value;
+  const prev=obs[lookback]?obs[lookback].value:null;
+  const chg=prev!=null?value-prev:null;
+  const pctChg=(prev!=null&&prev!==0)?(value-prev)/Math.abs(prev)*100:null;
+  const closes=obs.slice().reverse().map(o=>o.value); // chronological for sparkline
+  return{value,chg,pctChg,closes};
+}
+
+// ── CFTC Commitments of Traders — public Socrata API, no key needed ──
+let cotCache=null,cotTs=0;
+async function fetchJpyCot(){
+  if(cotCache&&Date.now()-cotTs<3600000)return cotCache;
+  const base='https://publicreporting.cftc.gov/resource/gpe5-46if.json';
+  const qs='?$where='+encodeURIComponent("market_and_exchange_names='JAPANESE YEN - CHICAGO MERCANTILE EXCHANGE'")
+    +'&$order='+encodeURIComponent('report_date_as_yyyy_mm_dd DESC')
+    +'&$select='+encodeURIComponent('report_date_as_yyyy_mm_dd,open_interest_all,lev_money_positions_long,lev_money_positions_short')
+    +'&$limit=60';
+  const url=base+qs;
+  let rows=null;
+  try{
+    const r=await fetch(url,{signal:mkTimeout(6000),credentials:'omit',headers:{'Accept':'application/json'}});
+    if(r.ok)rows=await r.json();
+  }catch(e){}
+  if(!rows){
+    try{const r=await proxyRace(url,7000);if(r)rows=await proxyJson(r);}catch(e){}
+  }
+  if(!rows||!rows.length)return null;
+  const series=rows.map(row=>{
+    const oi=parseFloat(row.open_interest_all);
+    const net=parseFloat(row.lev_money_positions_long)-parseFloat(row.lev_money_positions_short);
+    return{date:row.report_date_as_yyyy_mm_dd,netPctOi:oi?net/oi*100:0};
+  }).filter(s=>!isNaN(s.netPctOi));
+  if(!series.length)return null;
+  cotCache=series;cotTs=Date.now();
+  return series;
+}
+// Leveraged-money (hedge fund) net position as % of open interest, z-scored
+// against its own trailing 60-week range — stable across years as OI grows.
+function cotMetric(series){
+  if(!series||series.length<12)return null;
+  const vals=series.map(s=>s.netPctOi);
+  const latest=vals[0];
+  const hist=vals.slice(1);
+  const mean=hist.reduce((a,b)=>a+b,0)/hist.length;
+  const sd=Math.sqrt(hist.reduce((a,b)=>a+(b-mean)**2,0)/hist.length)||1;
+  return{value:latest,z:(latest-mean)/sd,closes:series.slice().reverse().map(s=>s.netPctOi)};
+}
+
+const RISK_INDICATORS=[
+  {id:'usdjpy',label:'USD/JPY',source:'yahoo',yf:['JPY=X'],
+    desc:'Yen carry-trade funding pair. Fast, large 1D moves can signal a carry unwind.',
+    metric:m=>quoteMetric(m['JPY=X']),
+    score:d=>normScore(Math.abs(d.pct1d),0.7,1.5)},
+  {id:'eurjpy',label:'EUR/JPY',source:'yahoo',yf:['EURJPY=X'],
+    desc:'Secondary carry-trade barometer — historically cracks before USD/JPY does.',
+    metric:m=>quoteMetric(m['EURJPY=X']),
+    score:d=>normScore(Math.abs(d.pct1d),0.7,1.5)},
+  {id:'jpycot',label:'JPY Spec Positioning',source:'cot',
+    desc:'Leveraged-fund net JPY futures position (% of open interest) vs its own 60-week range. Crowded shorts are unwind fuel.',
+    metric:(m,f,c)=>cotMetric(c),
+    score:d=>normScore(Math.max(0,-d.z),1.0,2.0)},
+  {id:'curve',label:'US10Y − 3M Spread',source:'yahoo',yf:['^TNX','^IRX'],
+    desc:'Yield-curve slope (10Y minus 3M bill). Inversion has preceded every US recession since 1970.',
+    metric:m=>{const t=m['^TNX'],r=m['^IRX'];if(!t||!r)return null;return{value:t.regularMarketPrice-r.regularMarketPrice,pct1d:null,pct5d:null,closes:null};},
+    score:d=>normScore(Math.max(0,0.5-d.value),0.3,0.8)},
+  {id:'vix',label:'VIX',source:'yahoo',yf:['^VIX'],
+    desc:'S&P 500 implied volatility — the market’s fear gauge.',
+    metric:m=>quoteMetric(m['^VIX']),
+    score:d=>normScore(d.value,15,25)},
+  {id:'dxy',label:'Dollar Index',source:'yahoo',yf:['DX-Y.NYB'],
+    desc:'Broad dollar trend. Sharp 5D swings reflect global dollar-funding stress.',
+    metric:m=>quoteMetric(m['DX-Y.NYB']),
+    score:d=>normScore(Math.abs(d.pct5d),1.2,2.2)},
+  {id:'gold',label:'Gold',source:'yahoo',yf:['GC=F'],
+    desc:'Safe-haven / inflation-hedge demand. Fast melt-ups flag risk-off flows.',
+    metric:m=>quoteMetric(m['GC=F']),
+    score:d=>normScore(Math.max(0,d.pct5d),4,7)},
+  {id:'nikkei',label:'Nikkei 225',source:'yahoo',yf:['^N225'],
+    desc:'Carry-trade equity leg. Sharp drops have historically coincided with yen spikes (Aug 2024).',
+    metric:m=>quoteMetric(m['^N225']),
+    score:d=>normScore(Math.max(0,-d.pct1d),3,5)},
+  {id:'oil',label:'WTI Crude',source:'yahoo',yf:['CL=F'],
+    desc:'Geopolitical / inflation pass-through risk that feeds into Fed policy decisions.',
+    metric:m=>quoteMetric(m['CL=F']),
+    score:d=>normScore(Math.abs(d.pct5d),8,15)},
+  {id:'nfci',label:'Chicago Fed NFCI',source:'fred',series:['NFCI'],lookbackLabel:'4W ago',
+    desc:'Financial conditions composite (money mkts, debt, equity, banking). Above 0 = tighter than average.',
+    metric:(m,f)=>fredMetric(f['NFCI'],4),
+    score:d=>normScore(Math.max(0,d.value),0.2,0.6)},
+  {id:'stlfsi',label:'STL Fed Stress Index',source:'fred',series:['STLFSI4'],lookbackLabel:'4W ago',
+    desc:'18-series financial stress composite. 0 = average stress; crisis episodes push it well above 1.',
+    metric:(m,f)=>fredMetric(f['STLFSI4'],4),
+    score:d=>normScore(Math.max(0,d.value),0.5,1.5)},
+  {id:'hyoas',label:'High-Yield Spread',source:'fred',series:['BAMLH0A0HYM2'],lookbackLabel:'1M ago',
+    desc:'ICE BofA US High-Yield OAS over Treasuries. Widening prices in rising default / recession risk.',
+    metric:(m,f)=>fredMetric(f['BAMLH0A0HYM2'],21),
+    score:d=>normScore(d.value,4,6)},
+  {id:'igoas',label:'Inv-Grade Spread',source:'fred',series:['BAMLC0A0CM'],lookbackLabel:'1M ago',
+    desc:'ICE BofA Investment-Grade OAS. Steadier than HY — a move here confirms broader credit stress.',
+    metric:(m,f)=>fredMetric(f['BAMLC0A0CM'],21),
+    score:d=>normScore(d.value,1.6,2.4)},
+  {id:'breakeven',label:'5Y5Y Inflation Fwd',source:'fred',series:['T5YIFR'],lookbackLabel:'1M ago',
+    desc:'The Fed’s preferred long-run inflation-expectations anchor. Drift far from ~2.2% either way suggests the anchor is slipping.',
+    metric:(m,f)=>fredMetric(f['T5YIFR'],21),
+    score:d=>normScore(Math.abs(d.value-2.2),0.3,0.6)},
+  {id:'walcl',label:'Fed Balance Sheet',source:'fred',series:['WALCL'],lookbackLabel:'8W',
+    desc:'Total Fed assets. Rapid expansion signals emergency liquidity injection; steady runoff is normal QT.',
+    metric:(m,f)=>fredMetric(f['WALCL'],8),
+    score:d=>normScore(Math.max(0,d.pctChg),1.5,3)}
+];
+const CARRY_IDS=['usdjpy','eurjpy','nikkei','vix','jpycot'];
+const MACRO_IDS=['curve','vix','gold','oil','nfci','stlfsi','hyoas','breakeven'];
+
+function computeComposite(ids,qmap,fmap,cotSeries){
+  const scores=ids.map(id=>{
+    const ind=RISK_INDICATORS.find(x=>x.id===id);
+    const d=ind.metric(qmap,fmap,cotSeries);
+    return d?ind.score(d):null;
+  }).filter(v=>v!=null);
+  if(!scores.length)return null;
+  return scores.reduce((a,b)=>a+b,0)/scores.length;
+}
+function compositeHtml(label,score){
+  const cls=statusFromScore(score);
+  const lbl=score==null?'--':compositeLabel(score);
+  const w=score==null?2:Math.max(2,score);
+  return'<div class="risk-comp">'
+    +'<div class="risk-comp-lbl"><span>'+label+'</span><span class="risk-comp-tag '+cls+'">'+lbl+'</span></div>'
+    +'<div class="risk-comp-bar"><div class="risk-comp-fill '+cls+'" style="width:'+w.toFixed(0)+'%"></div></div>'
+    +'</div>';
+}
+function fmtSpread(v){return(v>=0?'+':'')+v.toFixed(2)+'%';}
+function fmtSigned(v,suffix){return v==null?'--':(v>=0?'+':'')+v.toFixed(2)+(suffix||'');}
+function sparkDirUp(d){
+  if(d.pct1d!=null)return d.pct1d>=0;
+  if(d.chg!=null)return d.chg>=0;
+  if(d.closes&&d.closes.length>=2)return d.closes[d.closes.length-1]>=d.closes[d.closes.length-2];
+  return true;
+}
+function formatTile(ind,d){
+  if(!d){
+    if(ind.source==='fred'&&!(S.integrations?.fredApiKey||'').trim()){
+      return{valStr:'--',sub:'<button class="risk-cta" data-opencfg="macro">ADD FRED API KEY →</button>'};
+    }
+    return{valStr:'--',sub:'NO DATA'};
+  }
+  switch(ind.id){
+    case 'curve':
+      return{valStr:fmtSpread(d.value),sub:d.value<0?'INVERTED':(d.value<0.5?'FLAT':'NORMAL SLOPE')};
+    case 'vix':
+      return{valStr:d.value.toFixed(2),sub:fmtPct(d.pct1d)+' 1D'};
+    case 'nfci':case 'stlfsi':
+      return{valStr:fmtSigned(d.value),sub:'vs '+ind.lookbackLabel+': '+fmtSigned(d.chg)};
+    case 'hyoas':case 'igoas':
+      return{valStr:d.value.toFixed(2)+'%',sub:'vs '+ind.lookbackLabel+': '+fmtSigned(d.chg,'pp')};
+    case 'breakeven':
+      return{valStr:d.value.toFixed(2)+'%',sub:'vs '+ind.lookbackLabel+': '+fmtSigned(d.chg,'pp')};
+    case 'walcl':
+      return{valStr:'$'+(d.value/1e6).toFixed(2)+'T',sub:ind.lookbackLabel+' chg: '+(d.pctChg==null?'--':fmtSigned(d.pctChg,'%'))};
+    case 'jpycot':
+      return{valStr:fmtSigned(d.value,'% OI'),sub:'Z '+d.z.toFixed(2)+' vs 60W range · '+(d.value<0?'net short':'net long')};
+    default:
+      return{valStr:fmtPrice(d.value),sub:fmtPct(d.pct1d)+' 1D &middot; '+(d.pct5d==null?'--':fmtPct(d.pct5d))+' 5D'};
+  }
+}
+
+// ── Alert log — persisted transitions between ok/warn/crit ──
+const RISK_RANK={ok:0,warn:1,crit:2,unk:-1};
+function loadRiskAlerts(){try{return JSON.parse(localStorage.getItem('wam_risk_alerts')||'[]');}catch(e){return[];}}
+function saveRiskAlerts(list){try{localStorage.setItem('wam_risk_alerts',JSON.stringify(list.slice(0,50)));}catch(e){}}
+function fireRiskNotification(label){
+  if(typeof Notification==='undefined')return;
+  const fire=()=>{try{new Notification('Risk Monitor Alert',{body:label+' has moved into the red zone.'});}catch(e){}};
+  if(Notification.permission==='granted')fire();
+  else if(Notification.permission!=='denied')Notification.requestPermission().then(p=>{if(p==='granted')fire();});
+}
+function pushRiskAlert(label,from,to){
+  const list=loadRiskAlerts();
+  list.unshift({ts:Date.now(),label,from,to});
+  saveRiskAlerts(list);
+  if(to==='crit'&&S.integrations?.riskAlerts!==false)fireRiskNotification(label);
+}
+function alertLogHtml(){
+  const list=loadRiskAlerts().slice(0,12);
+  const rows=list.length?list.map(a=>{
+    const dir=RISK_RANK[a.to]>RISK_RANK[a.from]?'up':'down';
+    return'<div class="risk-alert-row"><span class="risk-alert-ts">'+new Date(a.ts).toLocaleTimeString('en-GB',{hour12:false})+'</span>'
+      +'<span class="risk-alert-lbl">'+esc(a.label)+'</span>'
+      +'<span class="risk-alert-tr '+dir+'">'+a.from.toUpperCase()+' → '+a.to.toUpperCase()+'</span></div>';
+  }).join(''):'<div class="risk-alert-empty">No status changes yet this session.</div>';
+  return'<div class="risk-alertlog"><div class="risk-alertlog-hdr"><span>RECENT ALERTS</span><button class="pbtn" id="riskClearAlerts">CLEAR</button></div><div id="riskAlertList">'+rows+'</div></div>';
+}
+
+// Three sub-views inside the one panel — mirrors the Watchlist's own tab
+// idiom — so the default view stays glanceable instead of a 13-tile wall.
+const RISK_TABS=[{key:'overview',label:'OVERVIEW'},{key:'signals',label:'ALL SIGNALS'},{key:'alerts',label:'ALERTS'}];
+const RISK_HEADLINE_IDS=['usdjpy','vix','curve','jpycot'];
+let riskTab=0;
+
+function riskTabsHtml(){
+  return'<div class="risk-tabs">'+RISK_TABS.map((t,i)=>
+    '<button class="risk-tab'+(i===riskTab?' on':'')+'" data-risktab="'+i+'">'+t.label+'</button>').join('')+'</div>';
+}
+function riskTileHtml(vm){
+  return'<div class="risk-tile">'
+    +'<div class="risk-tile-top"><span class="risk-dot '+vm.status+'"></span><span class="risk-tile-lbl">'+esc(vm.ind.label)+'</span></div>'
+    +'<div class="risk-tile-val">'+vm.valStr+'</div>'
+    +'<div class="risk-tile-sub">'+vm.sub+'</div>'
+    +(vm.spark?'<div class="risk-tile-spark">'+vm.spark+'</div>':'')
+    +'<div class="risk-tile-desc">'+esc(vm.ind.desc)+'</div>'
+    +'</div>';
+}
+
+let _riskPrevStatus={};
+function renderRiskPanel(qmap,fmap,cotSeries){
+  let hasCrit=false;
+  const changes=[];
+  function trackStatus(id,label,status){
+    if(status==='crit')hasCrit=true;
+    const prev=_riskPrevStatus[id];
+    if(prev!==undefined&&prev!==status)changes.push({label,from:prev,to:status});
+    _riskPrevStatus[id]=status;
+  }
+  // Always compute every tile + composite (so alerting/pulsing stays correct
+  // even while the user is parked on a different sub-tab) — only the final
+  // HTML assembly below picks which subset to actually render.
+  const tileVms=RISK_INDICATORS.map(ind=>{
+    const d=ind.metric(qmap,fmap,cotSeries);
+    const score=d?ind.score(d):null;
+    const status=statusFromScore(score);
+    trackStatus(ind.id,ind.label,status);
+    const{valStr,sub}=formatTile(ind,d);
+    const spark=(d&&d.closes&&d.closes.length>1)?sparkSvg(d.closes,sparkDirUp(d)):'';
+    return{ind,status,valStr,sub,spark};
+  });
+  const carry=computeComposite(CARRY_IDS,qmap,fmap,cotSeries);
+  const macro=computeComposite(MACRO_IDS,qmap,fmap,cotSeries);
+  trackStatus('carry','Yen Carry Unwind Risk',statusFromScore(carry));
+  trackStatus('macro','Fed / Macro Stress',statusFromScore(macro));
+  changes.forEach(c=>pushRiskAlert(c.label,c.from,c.to));
+
+  let body;
+  if(riskTab===1){
+    body='<div class="risk-tiles">'+tileVms.map(riskTileHtml).join('')+'</div>';
+  }else if(riskTab===2){
+    body=alertLogHtml();
+  }else{
+    const headline=tileVms.filter(vm=>RISK_HEADLINE_IDS.includes(vm.ind.id));
+    body=compositeHtml('YEN CARRY UNWIND RISK',carry)
+      +compositeHtml('FED / MACRO STRESS',macro)
+      +'<div class="risk-tiles">'+headline.map(riskTileHtml).join('')+'</div>'
+      +'<div class="risk-note">Rule-based heuristic monitor, not a forecast or investment advice. Thresholds are illustrative — tune them to your own view. See ALL SIGNALS for the full indicator set.</div>';
+  }
+  document.getElementById('riskGrid').innerHTML=riskTabsHtml()+body;
+  return hasCrit;
+}
+function updateRiskAlertUI(hasCrit){
+  document.getElementById('ppRisk')?.classList.toggle('alert',!!hasCrit);
+  document.getElementById('sdRisk')?.classList.toggle('alert',!!hasCrit);
+}
+
+let riskTimer=null,_riskFetching=false;
+let _lastRiskQmap=null,_lastRiskFmap=null,_lastRiskCot=null;
+async function loadRiskMonitor(force){
+  if(_riskFetching)return;
+  _riskFetching=true;
+  const stat=document.getElementById('riskStat');
+  if(stat)stat.textContent='UPDATING...';
+  setSbDot('sdRisk','warn');
+  if(force){fredCache={};cotCache=null;}
+  try{
+    const syms=[...new Set(RISK_INDICATORS.filter(i=>i.source==='yahoo').flatMap(i=>i.yf))];
+    const fredSeries=[...new Set(RISK_INDICATORS.filter(i=>i.source==='fred').flatMap(i=>i.series))];
+    const[quotes,fredResults,cotSeries]=await Promise.all([
+      fetchQuotes(syms),
+      Promise.all(fredSeries.map(async sid=>[sid,await fetchFredSeries(sid)])),
+      fetchJpyCot()
+    ]);
+    if(!quotes.length){
+      if(stat)stat.textContent='NO DATA';
+      setSbDot('sdRisk','err');
+      return;
+    }
+    const qmap={};quotes.forEach(q=>qmap[q.symbol]=q);
+    const fmap={};fredResults.forEach(([sid,obs])=>{fmap[sid]=obs;});
+    _lastRiskQmap=qmap;_lastRiskFmap=fmap;_lastRiskCot=cotSeries;
+    const hasCrit=renderRiskPanel(qmap,fmap,cotSeries);
+    if(stat)stat.textContent=new Date().toLocaleTimeString('en-GB',{hour12:false});
+    setSbDot('sdRisk','ok');
+    updateRiskAlertUI(hasCrit);
+  }catch(e){
+    if(stat)stat.textContent='ERROR';
+    setSbDot('sdRisk','err');
+  }finally{
+    _riskFetching=false;
+  }
+}
+function startRiskRefresh(){
+  if(riskTimer)clearInterval(riskTimer);
+  riskTimer=setInterval(()=>loadRiskMonitor(false),60000);
+}
+document.getElementById('riskRefBtn').addEventListener('click',()=>loadRiskMonitor(true));
+document.getElementById('colRisk').addEventListener('click',e=>{
+  const tab=e.target.closest('[data-risktab]');
+  if(tab){
+    riskTab=parseInt(tab.dataset.risktab);
+    if(_lastRiskQmap)renderRiskPanel(_lastRiskQmap,_lastRiskFmap,_lastRiskCot);
+    return;
+  }
+  const cta=e.target.closest('[data-opencfg]');
+  if(cta){openCfg(cta.dataset.opencfg);return;}
+  if(e.target.id==='riskClearAlerts'){
+    saveRiskAlerts([]);
+    if(_lastRiskQmap)renderRiskPanel(_lastRiskQmap,_lastRiskFmap,_lastRiskCot);
+  }
+});
 
 // ══════════════════════════════════════════════
 // NEWS
@@ -2086,6 +2560,7 @@ document.addEventListener('keydown',e=>{
     if(e.key==='1'){togglePanel('news');e.preventDefault();}
     else if(e.key==='2'){togglePanel('broadcast');e.preventDefault();}
     else if(e.key==='3'){togglePanel('watch');e.preventDefault();}
+    else if(e.key==='4'){togglePanel('risk');e.preventDefault();}
     return;
   }
   const k=e.key;
@@ -2160,10 +2635,11 @@ function renderBehavior(){
 }
 function renderLayout(){
   const l=wip.layout||{};
-  const n=document.getElementById('cfgShowNews');const b=document.getElementById('cfgShowBroadcast');const w=document.getElementById('cfgShowWatch');
+  const n=document.getElementById('cfgShowNews');const b=document.getElementById('cfgShowBroadcast');const w=document.getElementById('cfgShowWatch');const rk=document.getElementById('cfgShowRisk');
   if(n)n.classList.toggle('on',l.showNews!==false);
   if(b)b.classList.toggle('on',l.showBroadcast!==false);
   if(w)w.classList.toggle('on',l.showWatch!==false);
+  if(rk)rk.classList.toggle('on',l.showRisk!==false);
   document.querySelectorAll('[data-ms]').forEach(x=>x.classList.toggle('on',x.dataset.ms===String(l.maxStreams||4)));
   const sel=document.getElementById('tzSelect');
   if(sel){
@@ -2173,6 +2649,13 @@ function renderLayout(){
     Array.from(sel.options).forEach(o=>{if(o.value.startsWith(l.secondaryTz+'|')){sel.value=o.value;found=true;}});
     if(!found)sel.value='';
   }
+}
+function renderMacro(){
+  const i=wip.integrations||{};
+  const inp=document.getElementById('fredKeyInp');
+  if(inp)inp.value=i.fredApiKey||'';
+  const t=document.getElementById('cfgRiskAlerts');
+  if(t)t.classList.toggle('on',i.riskAlerts!==false);
 }
 
 // ══════════════════════════════════════════════
@@ -2311,13 +2794,14 @@ document.getElementById('autoStreamOpts').addEventListener('click',e=>{
 });
 
 // Layout panel visibility toggles (apply immediately)
-['cfgShowNews','cfgShowBroadcast','cfgShowWatch'].forEach(id=>{
+const PANEL_KEY_MAP={news:'showNews',broadcast:'showBroadcast',watch:'showWatch',risk:'showRisk'};
+['cfgShowNews','cfgShowBroadcast','cfgShowWatch','cfgShowRisk'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(){
-    const which=id==='cfgShowNews'?'news':id==='cfgShowBroadcast'?'broadcast':'watch';
+    const which=id==='cfgShowNews'?'news':id==='cfgShowBroadcast'?'broadcast':id==='cfgShowWatch'?'watch':'risk';
     togglePanel(which); // applies to S and saves
     if(!wip.layout)wip.layout=clone(S.layout||DEFAULTS.layout);
-    wip.layout[{news:'showNews',broadcast:'showBroadcast',watch:'showWatch'}[which]]=S.layout[{news:'showNews',broadcast:'showBroadcast',watch:'showWatch'}[which]];
-    this.classList.toggle('on',S.layout[{news:'showNews',broadcast:'showBroadcast',watch:'showWatch'}[which]]!==false);
+    wip.layout[PANEL_KEY_MAP[which]]=S.layout[PANEL_KEY_MAP[which]];
+    this.classList.toggle('on',S.layout[PANEL_KEY_MAP[which]]!==false);
   });
 });
 
@@ -2337,6 +2821,17 @@ document.getElementById('cfgShowDesc').addEventListener('click',function(){
 });
 document.getElementById('cfgShowFng').addEventListener('click',function(){
   wip.behavior.showFng=!wip.behavior.showFng;this.classList.toggle('on',wip.behavior.showFng);
+});
+
+// Macro data / risk alerts
+document.getElementById('fredKeyInp').addEventListener('input',function(){
+  if(!wip.integrations)wip.integrations=clone(S.integrations||DEFAULTS.integrations);
+  wip.integrations.fredApiKey=this.value.trim();
+});
+document.getElementById('cfgRiskAlerts').addEventListener('click',function(){
+  if(!wip.integrations)wip.integrations=clone(S.integrations||DEFAULTS.integrations);
+  wip.integrations.riskAlerts=!wip.integrations.riskAlerts;
+  this.classList.toggle('on',wip.integrations.riskAlerts);
 });
 
 // Max stream slots
@@ -2392,6 +2887,7 @@ document.getElementById('importFile').addEventListener('change',function(){
       imp.appearance.wlColumns=Object.assign({},DEFAULTS.appearance.wlColumns,imp.appearance.wlColumns||{});
       imp.behavior=Object.assign({},DEFAULTS.behavior,imp.behavior||{});
       imp.layout=Object.assign({},DEFAULTS.layout,imp.layout||{});
+      imp.integrations=Object.assign({},DEFAULTS.integrations,imp.integrations||{});
       S=imp;saveState();
       st.style.color='var(--green2)';st.textContent='CONFIGURATION IMPORTED. APPLYING...';
       setTimeout(()=>{applyAll();closeCfg();},700);
@@ -2485,9 +2981,10 @@ function openCfg(page='symbols'){
   wip.appearance.wlColumns=Object.assign({},S.appearance?.wlColumns||DEFAULTS.appearance.wlColumns);
   wip.behavior=Object.assign({},S.behavior||DEFAULTS.behavior);
   wip.layout=Object.assign({},S.layout||DEFAULTS.layout);
+  wip.integrations=Object.assign({},S.integrations||DEFAULTS.integrations);
   wipWlTab=0;
   renderTickerList();renderWlMgr();renderFeedList();renderStreamList();
-  renderAppearance();renderBehavior();renderLayout();
+  renderAppearance();renderBehavior();renderLayout();renderMacro();
   const nav=document.querySelector('[data-pg="'+page+'"]');
   if(nav){
     document.querySelectorAll('.s-nav').forEach(x=>x.classList.toggle('on',x===nav));
@@ -2507,11 +3004,12 @@ function applyAll(){
   buildTicker(S.tickers);buildWlTabs();wlCache={};loadWlTab(false);startWlRefresh();
   newsCache={};currentFilter='all';loadNews();startNewsRefresh();
   buildStreamBtns();applyPanelLayout();tick();
+  loadRiskMonitor();startRiskRefresh();
   document.getElementById('sbFng').textContent='';
   if(S.behavior?.showFng!==false)updateFearGreed();
 }
 function applyAndClose(){
-  S=clone(wip);S.appearance=clone(wip.appearance);S.behavior=clone(wip.behavior);S.layout=clone(wip.layout);
+  S=clone(wip);S.appearance=clone(wip.appearance);S.behavior=clone(wip.behavior);S.layout=clone(wip.layout);S.integrations=clone(wip.integrations);
   saveState();applyAll();closeCfg();
 }
 function resetDefaults(){
@@ -2527,6 +3025,7 @@ buildTicker(S.tickers);
 buildWlTabs();loadWlTab(false);startWlRefresh();
 loadNews();startNewsRefresh();
 buildStreamBtns();
+loadRiskMonitor();startRiskRefresh();
 if(S.behavior?.showFng!==false)updateFearGreed();
 // Keep the slower-moving dataset live too (sessions handled above at 30s)
 setInterval(()=>{if(S.behavior?.showFng!==false)updateFearGreed();},900000); // F&G every 15m
